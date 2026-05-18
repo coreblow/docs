@@ -1,0 +1,12 @@
+{
+  "name": "@coreblow/docs",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.23.0",
+  "scripts": {
+    "docs:check": "node scripts/check-readme.mjs && node scripts/docs-link-audit.mjs",
+    "docs:links": "node scripts/docs-link-audit.mjs",
+    "docs:glossary": "node scripts/check-docs-i18n-glossary.mjs"
+  },
+  "devDependencies": {}
+}
