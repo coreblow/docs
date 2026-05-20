@@ -68,7 +68,8 @@ const allFiles = walk(DOCS_DIR);
 const relAllFiles = new Set(allFiles.map((abs) => normalizeSlashes(path.relative(DOCS_DIR, abs))));
 
 function isGeneratedTranslatedDoc(relPath) {
-  return relPath.startsWith("zh-CN/");
+  const firstSegment = relPath.split("/")[0];
+  return new Set(["zh-CN", "ja-JP", "ko-KR"]).has(firstSegment);
 }
 
 const markdownFiles = allFiles.filter((abs) => {
@@ -148,6 +149,9 @@ function collectNavPageEntries(node) {
   }
 
   const record = /** @type {Record<string, unknown>} */ (node);
+  if (typeof record.page === "string") {
+    entries.push(record.page);
+  }
   if (Array.isArray(record.pages)) {
     for (const page of record.pages) {
       if (typeof page === "string") {

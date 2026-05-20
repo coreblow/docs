@@ -1913,6 +1913,38 @@ export const DOCS = [
     "content": "# Contribution Guide\n\n## Overview"
   },
   {
+    "title": "CoreHub Registry API",
+    "route": "/corehub/api",
+    "path": "docs/corehub/api.md",
+    "section": "corehub",
+    "summary": "CoreHub Registry API v1 is the read-only public directory API for CoreBlow skills, plugins, providers, and channel entries.",
+    "content": "# CoreHub Registry API\n\nCoreHub Registry API v1 is the read-only public directory API for CoreBlow skills, plugins, providers, and channel entries.\n\nBase URL:\n\n```text\nhttps://coreblow.com/corehub/api/v1\n```\n\nThe API is backed by the static CoreHub catalog today. It is intentionally read-only while publisher identity, version storage, moderation, and write-side registry flows are planned.\n\n## Endpoints\n\n| Method | Path | Purpose |\n| --- | --- | --- |\n| `GET` | `/corehub/api/v1` | Discovery document for API clients. |\n| `GET` | `/corehub/api/v1/catalog` | Full catalog records. |\n| `GET` | `/corehub/api/v1/entries` | Entry list. Supports `kind`. |\n| `GET` | `/corehub/api/v1/entries/:id` | Inspect one catalog entry. |\n| `GET` | `/corehub/api/v1/search?q=<query>` | Search entries by id, kind, name, summary, tags, capabilities, platforms, and review state. Supports `kind` and `limit`. |\n| `GET` | `/corehub/api/v1/packages` | Package-compatible list alias over the catalog. Supports `kind` and `family=skill`. |\n| `GET` | `/corehub/api/v1/packages/search?q=<query>` | Package-compatible search alias. Supports `kind` and `limit`. |\n| `GET` | `/corehub/api/v1/packages/:id` | Inspect one package-compatible entry. |\n| `GET` | `/corehub/api/v1/packages/:id/versions` | Return the current static version as `latest`. |\n| `GET` | `/corehub/api/v1/packages/:id/files` | Return file metadata for a package version. Currently empty until artifact storage lands. |\n| `GET` | `/corehub/api/v1/packages/:id/artifact` | Return artifact metadata for a package version. Currently reports no artifact. |\n| `GET` | `/corehub/api/v1/packages/:id/download` | Download a package artifact. Currently returns `501 not_implemented`. |\n| `GET` | `/corehub/api/v1/download?id=<id>` | Top-level download alias. Currently returns `501 not_implemented`. |\n\n## Query Parameters\n\n| Parameter | Endpoints | Description |\n| --- | --- | --- |\n| `kind` | `/entries`, `/catalog`, `/packages`, `/search`, `/packages/search` | Filters to `skill`, `plugin`, `provider`, or `channel`. |\n| `q` | `/search`, `/packages/search` | Search text. Empty queries return an empty result list. |\n| `limit` | `/search`, `/packages/search` | Maximum result count from `1` to `100`. Defaults to `25`. |\n| `family` | `/packages` | `family=skill` maps to skill entries for ClawHub-style clients. |\n| `version` | `/packages/:id/files`, `/packages/:id/artifact`, `/packages/:id/download`, `/download` | Selects a package version. Defaults to the current static version. |\n| `tag` | `/packages/:id/files`, `/packages/:id/artifact`, `/packages/:id/download`, `/download` | `latest` resolves to the current static version. |\n| `id` | `/download` | Package id for the top-level download alias. |\n\n## Response Envelope\n\nAll v1 responses use the same envelope:\n\n```json\n{\n  \"apiVersion\": \"v1\",\n  \"data\": [],\n  \"meta\": {\n    \"count\": 0\n  }\n}\n```\n\nSingle-entry endpoints return an object in `data`. List and search endpoints return an array in `data`.\n\n## Entry Shape\n\n```json\n{\n  \"id\": \"plugin-lab\",\n  \"kind\": \"plugin\",\n  \"name\": \"Plugin Lab\",\n  \"summary\": \"Compatibility lab for CoreBlow community plugins and plugin API contracts.\",\n  \"source\": \"https://github.com/coreblow/plugin-lab\",\n  \"homepage\": \"https://github.com/coreblow/plugin-lab\",\n  \"version\": \"0.1.0\",\n  \"tags\": [\"testing\", \"compatibility\", \"plugins\"],\n  \"capabilities\": [\"plugin fixtures\", \"compatibility checks\", \"contract validation\"],\n  \"review\": {\n    \"state\": \"verified\",\n    \"checkedAt\": \"2026-05-19\",\n    \"notes\": \"CoreBlow ecosystem compatibility surface.\"\n  },\n  \"coreblow\": {\n    \"minCoreblowVersion\": \"1.0.0\",\n    \"platforms\": [\"linux\", \"macos\", \"windows\"]\n  },\n  \"links\": {\n    \"self\": \"/corehub/api/v1/entries/plugin-lab\",\n    \"package\": \"/corehub/api/v1/packages/plugin-lab\",\n    \"versions\": \"/corehub/api/v1/packages/plugin-lab/versions\"\n  }\n}\n```\n\n## Examples\n\nList every entry:\n\n```sh\ncurl https://coreblow.com/corehub/api/v1/entries\n```\n\nFilter to skills:\n\n```sh\ncurl \"https://coreblow.com/corehub/api/v1/entries?kind=skill\"\n```\n\nSearch for plugin records:\n\n```sh\ncurl \"https://coreblow.com/corehub/api/v1/search?q=plugin\"\n```\n\nInspect one package-compatible entry:\n\n```sh\ncurl https://coreblow.com/corehub/api/v1/packages/plugin-lab\n```\n\nRead file metadata:\n\n```sh\ncurl https://coreblow.com/corehub/api/v1/packages/plugin-lab/files\n```\n\nRead artifact metadata:\n\n```sh\ncurl https://coreblow.com/corehub/api/v1/packages/plugin-lab/artifact\n```\n\nProbe the download endpoint:\n\n```sh\ncurl https://coreblow.com/corehub/api/v1/packages/plugin-lab/download\n```\n\n## CLI Usage\n\nCoreHub CLI read commands can use the hosted registry with `--registry`:\n\n```sh\nnpm run corehub -- explore --registry https://coreblow.com/corehub\nnpm run corehub -- search plugin --registry https://coreblow.com/corehub\nnpm run corehub -- package inspect plugin-lab --registry https://coreblow.com/corehub\nnpm run corehub -- package versions plugin-lab --registry https://coreblow.com/corehub\nnpm run corehub -- package files plugin-lab --registry https://coreblow.com/corehub\nnpm run corehub -- package artifact plugin-lab --registry https://coreblow.com/corehub\nnpm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub\nnpm run corehub -- registry info --registry https://coreblow.com/corehub\n```\n\nYou can also set:\n\n```sh\nCOREHUB_REGISTRY=https://coreblow.com/corehub\n```\n\n## Current Limits\n\n| Surface | Status |\n| --- | --- |\n| Read catalog | Available in v1. |\n| Search | Available in v1 with deterministic static-catalog scoring. |\n| Package aliases | Available in v1 for CLI and ClawHub-style command compatibility. |\n| Publish writes | Planned. Requires publisher identity and moderation. |\n| File metadata | Available in v1 with empty static-catalog results until artifact storage lands. |\n| Artifact metadata | Available in v1 with `artifact: null` until artifact storage lands. |\n| File downloads | Endpoint available in v1 as `501 not_implemented`. Requires version storage and integrity metadata. |\n| Install counts | Planned. Requires safe aggregate analytics. |\n\n## Error Responses\n\nMissing entries and unknown routes return the standard envelope with an error object in `data`:\n\n```json\n{\n  \"apiVersion\": \"v1\",\n  \"data\": {\n    \"error\": \"not_found\",\n    \"message\": \"CoreHub entry not found: missing-entry\"\n  },\n  \"meta\": {\n    \"count\": 0\n  }\n}\n```"
+  },
+  {
+    "title": "CoreHub CLI",
+    "route": "/corehub/cli",
+    "path": "docs/corehub/cli.md",
+    "section": "corehub",
+    "summary": "The CoreHub CLI validates the catalog, searches local entries, inspects skill folders, and can read the hosted Registry API v1.",
+    "content": "# CoreHub CLI\n\nThe CoreHub CLI validates the catalog, searches local entries, inspects skill folders, and can read the hosted Registry API v1.\n\n## Local Catalog Commands\n\nRun these from the CoreHub repository:\n\n```sh\nnpm run corehub -- validate\nnpm run corehub -- explore\nnpm run corehub -- list\nnpm run corehub -- list --kind skill\nnpm run corehub -- search plugin\nnpm run corehub -- inspect fixtures/example-skill\nnpm run corehub -- skill publish fixtures/example-skill\n```\n\n`skill publish` is currently a dry-run inspection flow. Remote publishing remains planned until publisher identity, moderation, and storage flows are ready.\n\n## Package-Compatible Commands\n\nCoreHub keeps ClawHub-style package commands so clients can grow around stable registry habits:\n\n```sh\nnpm run corehub -- package explore\nnpm run corehub -- package search plugin\nnpm run corehub -- package inspect plugin-lab\nnpm run corehub -- package versions plugin-lab\nnpm run corehub -- package files plugin-lab\nnpm run corehub -- package artifact plugin-lab\nnpm run corehub -- package download plugin-lab\n```\n\n## Hosted Registry Reads\n\nPass `--registry` to read from production:\n\n```sh\nnpm run corehub -- explore --registry https://coreblow.com/corehub\nnpm run corehub -- search plugin --registry https://coreblow.com/corehub\nnpm run corehub -- package inspect plugin-lab --registry https://coreblow.com/corehub\nnpm run corehub -- package versions plugin-lab --registry https://coreblow.com/corehub\nnpm run corehub -- package files plugin-lab --registry https://coreblow.com/corehub\nnpm run corehub -- package artifact plugin-lab --registry https://coreblow.com/corehub\nnpm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub\nnpm run corehub -- registry info --registry https://coreblow.com/corehub\n```\n\nOr configure:\n\n```sh\nCOREHUB_REGISTRY=https://coreblow.com/corehub\n```\n\n## Command Map\n\n| Command | Status | Purpose |\n| --- | --- | --- |\n| `corehub validate` | Available | Validate the local catalog. |\n| `corehub explore` | Available | List catalog entries. |\n| `corehub list` | Available | List entries, optionally filtered by `kind`. |\n| `corehub search <query>` | Available | Search local or hosted entries. |\n| `corehub inspect <target>` | Available | Inspect a catalog id or local skill folder. |\n| `corehub package explore` | Available | Package-compatible list command. |\n| `corehub package search <query>` | Available | Package-compatible search command. |\n| `corehub package inspect <id>` | Available | Inspect one package-compatible entry. |\n| `corehub package versions <id>` | Available | Show static latest version metadata. |\n| `corehub package files <id>` | Available | Show file metadata. Static-catalog entries currently return an empty file list. |\n| `corehub package artifact <id>` | Available | Show artifact metadata. Static-catalog entries currently return `artifact: null`. |\n| `corehub package download <id>` | Contract only | Probe the download endpoint. Hosted registry returns `501 not_implemented` until artifact storage lands. |\n| `corehub package publish <source>` | Planned | Publish package artifacts after registry writes land. |\n| `corehub registry info` | Available | Read the API discovery document. |"
+  },
+  {
+    "title": "CoreHub",
+    "route": "/corehub",
+    "path": "docs/corehub/index.md",
+    "section": "corehub",
+    "summary": "CoreHub is the CoreBlow directory for skills, plugins, providers, channels, review metadata, and compatibility information.",
+    "content": "# CoreHub\n\nCoreHub is the CoreBlow directory for skills, plugins, providers, channels, review metadata, and compatibility information.\n\nPublic surfaces:\n\n| Surface | URL |\n| --- | --- |\n| Web directory | `https://coreblow.com/corehub` |\n| Registry API v1 | `https://coreblow.com/corehub/api/v1` |\n| Catalog JSON | `https://coreblow.com/corehub/catalog.json` |\n| CoreHub repository | `https://github.com/coreblow/corehub` |\n\n## What CoreHub Publishes\n\nCoreHub entries describe installable or discoverable CoreBlow ecosystem packages:\n\n| Kind | Purpose |\n| --- | --- |\n| `skill` | Reusable agent instructions and local helper files. |\n| `plugin` | Code plugins and compatibility fixtures. |\n| `provider` | Model or service provider integrations. |\n| `channel` | Messaging or communication channel integrations. |\n\n## Current Scope\n\nThe current CoreHub release is the registry foundation:\n\n- Static catalog validation.\n- Deterministic search.\n- Public web directory.\n- Read-only Registry API v1.\n- CLI reads through `--registry`.\n- Package-compatible aliases for ClawHub-style command habits.\n\nWrite-side publishing, publisher identity, version storage, moderation, file downloads, and install analytics are planned follow-up surfaces.\n\n## Learn More\n\n- [Quickstart](/corehub/quickstart)\n- [CLI](/corehub/cli)\n- [Registry API](/corehub/api)"
+  },
+  {
+    "title": "CoreHub Quickstart",
+    "route": "/corehub/quickstart",
+    "path": "docs/corehub/quickstart.md",
+    "section": "corehub",
+    "summary": "Use CoreHub to browse CoreBlow ecosystem entries from the web, the public API, or the CoreHub CLI.",
+    "content": "# CoreHub Quickstart\n\nUse CoreHub to browse CoreBlow ecosystem entries from the web, the public API, or the CoreHub CLI.\n\n## Browse the Directory\n\nOpen:\n\n```text\nhttps://coreblow.com/corehub\n```\n\nThe web directory reads from the same catalog served at:\n\n```text\nhttps://coreblow.com/corehub/catalog.json\n```\n\n## Query the Registry API\n\nList entries:\n\n```sh\ncurl https://coreblow.com/corehub/api/v1/entries\n```\n\nSearch entries:\n\n```sh\ncurl \"https://coreblow.com/corehub/api/v1/search?q=plugin\"\n```\n\nInspect one package-compatible entry:\n\n```sh\ncurl https://coreblow.com/corehub/api/v1/packages/plugin-lab\n```\n\n## Use the CLI Against the Hosted Registry\n\nFrom the CoreHub repository:\n\n```sh\nnpm run corehub -- explore --registry https://coreblow.com/corehub\nnpm run corehub -- search plugin --registry https://coreblow.com/corehub\nnpm run corehub -- package inspect plugin-lab --registry https://coreblow.com/corehub\n```\n\nYou can also set:\n\n```sh\nCOREHUB_REGISTRY=https://coreblow.com/corehub\n```\n\nThen run read commands without repeating `--registry`.\n\n## Next Steps\n\n- Read the [CLI reference](/corehub/cli).\n- Read the [Registry API reference](/corehub/api)."
+  },
+  {
     "title": "Custom Models",
     "route": "/custom-models",
     "path": "docs/custom-models.md",
@@ -2767,750 +2799,6 @@ export const DOCS = [
     "section": "overview",
     "summary": "",
     "content": "# Issue Triage\n\n## Overview"
-  },
-  {
-    "title": "Automation - パート1",
-    "route": "/ja-JP/automation/automation-1",
-    "path": "docs/ja-JP/automation/automation-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではautomationについて説明します。",
-    "content": "# Automation - パート1\n\nこのセクションではautomationについて説明します。"
-  },
-  {
-    "title": "Automation - パート2",
-    "route": "/ja-JP/automation/automation-2",
-    "path": "docs/ja-JP/automation/automation-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではautomationについて説明します。",
-    "content": "# Automation - パート2\n\nこのセクションではautomationについて説明します。"
-  },
-  {
-    "title": "Automation - パート3",
-    "route": "/ja-JP/automation/automation-3",
-    "path": "docs/ja-JP/automation/automation-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではautomationについて説明します。",
-    "content": "# Automation - パート3\n\nこのセクションではautomationについて説明します。"
-  },
-  {
-    "title": "Channels - パート 1",
-    "route": "/ja-JP/channels/channels-1",
-    "path": "docs/ja-JP/channels/channels-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではchannelsについて説明します。",
-    "content": "# Channels - パート 1\n\nこのセクションではchannelsについて説明します。"
-  },
-  {
-    "title": "Channels - パート 2",
-    "route": "/ja-JP/channels/channels-2",
-    "path": "docs/ja-JP/channels/channels-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではchannelsについて説明します。",
-    "content": "# Channels - パート 2\n\nこのセクションではchannelsについて説明します。"
-  },
-  {
-    "title": "Channels - パート 3",
-    "route": "/ja-JP/channels/channels-3",
-    "path": "docs/ja-JP/channels/channels-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではchannelsについて説明します。",
-    "content": "# Channels - パート 3\n\nこのセクションではchannelsについて説明します。"
-  },
-  {
-    "title": "Channels - パート 4",
-    "route": "/ja-JP/channels/channels-4",
-    "path": "docs/ja-JP/channels/channels-4.md",
-    "section": "ja-JP",
-    "summary": "このセクションではchannelsについて説明します。",
-    "content": "# Channels - パート 4\n\nこのセクションではchannelsについて説明します。"
-  },
-  {
-    "title": "Channels - パート 5",
-    "route": "/ja-JP/channels/channels-5",
-    "path": "docs/ja-JP/channels/channels-5.md",
-    "section": "ja-JP",
-    "summary": "このセクションではchannelsについて説明します。",
-    "content": "# Channels - パート 5\n\nこのセクションではchannelsについて説明します。"
-  },
-  {
-    "title": "CLIガイド",
-    "route": "/ja-JP/cli",
-    "path": "docs/ja-JP/cli.md",
-    "section": "ja-JP",
-    "summary": "CoreBlowのCLIコマンドリファレンス。",
-    "content": "# CLIガイド\n\nCoreBlowのCLIコマンドリファレンス。"
-  },
-  {
-    "title": "Cli - パート 1",
-    "route": "/ja-JP/cli/cli-1",
-    "path": "docs/ja-JP/cli/cli-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではcliについて説明します。",
-    "content": "# Cli - パート 1\n\nこのセクションではcliについて説明します。"
-  },
-  {
-    "title": "Cli - パート 2",
-    "route": "/ja-JP/cli/cli-2",
-    "path": "docs/ja-JP/cli/cli-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではcliについて説明します。",
-    "content": "# Cli - パート 2\n\nこのセクションではcliについて説明します。"
-  },
-  {
-    "title": "Cli - パート 3",
-    "route": "/ja-JP/cli/cli-3",
-    "path": "docs/ja-JP/cli/cli-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではcliについて説明します。",
-    "content": "# Cli - パート 3\n\nこのセクションではcliについて説明します。"
-  },
-  {
-    "title": "Cli - パート 4",
-    "route": "/ja-JP/cli/cli-4",
-    "path": "docs/ja-JP/cli/cli-4.md",
-    "section": "ja-JP",
-    "summary": "このセクションではcliについて説明します。",
-    "content": "# Cli - パート 4\n\nこのセクションではcliについて説明します。"
-  },
-  {
-    "title": "Cli - パート 5",
-    "route": "/ja-JP/cli/cli-5",
-    "path": "docs/ja-JP/cli/cli-5.md",
-    "section": "ja-JP",
-    "summary": "このセクションではcliについて説明します。",
-    "content": "# Cli - パート 5\n\nこのセクションではcliについて説明します。"
-  },
-  {
-    "title": "Concepts - パート 1",
-    "route": "/ja-JP/concepts/concepts-1",
-    "path": "docs/ja-JP/concepts/concepts-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではconceptsについて説明します。",
-    "content": "# Concepts - パート 1\n\nこのセクションではconceptsについて説明します。"
-  },
-  {
-    "title": "Concepts - パート 2",
-    "route": "/ja-JP/concepts/concepts-2",
-    "path": "docs/ja-JP/concepts/concepts-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではconceptsについて説明します。",
-    "content": "# Concepts - パート 2\n\nこのセクションではconceptsについて説明します。"
-  },
-  {
-    "title": "Concepts - パート 3",
-    "route": "/ja-JP/concepts/concepts-3",
-    "path": "docs/ja-JP/concepts/concepts-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではconceptsについて説明します。",
-    "content": "# Concepts - パート 3\n\nこのセクションではconceptsについて説明します。"
-  },
-  {
-    "title": "Concepts - パート 4",
-    "route": "/ja-JP/concepts/concepts-4",
-    "path": "docs/ja-JP/concepts/concepts-4.md",
-    "section": "ja-JP",
-    "summary": "このセクションではconceptsについて説明します。",
-    "content": "# Concepts - パート 4\n\nこのセクションではconceptsについて説明します。"
-  },
-  {
-    "title": "Concepts - パート 5",
-    "route": "/ja-JP/concepts/concepts-5",
-    "path": "docs/ja-JP/concepts/concepts-5.md",
-    "section": "ja-JP",
-    "summary": "このセクションではconceptsについて説明します。",
-    "content": "# Concepts - パート 5\n\nこのセクションではconceptsについて説明します。"
-  },
-  {
-    "title": "Debug - パート1",
-    "route": "/ja-JP/debug/debug-1",
-    "path": "docs/ja-JP/debug/debug-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではdebugについて説明します。",
-    "content": "# Debug - パート1\n\nこのセクションではdebugについて説明します。"
-  },
-  {
-    "title": "Debug - パート2",
-    "route": "/ja-JP/debug/debug-2",
-    "path": "docs/ja-JP/debug/debug-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではdebugについて説明します。",
-    "content": "# Debug - パート2\n\nこのセクションではdebugについて説明します。"
-  },
-  {
-    "title": "Debug - パート3",
-    "route": "/ja-JP/debug/debug-3",
-    "path": "docs/ja-JP/debug/debug-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではdebugについて説明します。",
-    "content": "# Debug - パート3\n\nこのセクションではdebugについて説明します。"
-  },
-  {
-    "title": "Design - パート1",
-    "route": "/ja-JP/design/design-1",
-    "path": "docs/ja-JP/design/design-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではdesignについて説明します。",
-    "content": "# Design - パート1\n\nこのセクションではdesignについて説明します。"
-  },
-  {
-    "title": "Design - パート2",
-    "route": "/ja-JP/design/design-2",
-    "path": "docs/ja-JP/design/design-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではdesignについて説明します。",
-    "content": "# Design - パート2\n\nこのセクションではdesignについて説明します。"
-  },
-  {
-    "title": "Design - パート3",
-    "route": "/ja-JP/design/design-3",
-    "path": "docs/ja-JP/design/design-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではdesignについて説明します。",
-    "content": "# Design - パート3\n\nこのセクションではdesignについて説明します。"
-  },
-  {
-    "title": "Diagnostics - パート1",
-    "route": "/ja-JP/diagnostics/diagnostics-1",
-    "path": "docs/ja-JP/diagnostics/diagnostics-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではdiagnosticsについて説明します。",
-    "content": "# Diagnostics - パート1\n\nこのセクションではdiagnosticsについて説明します。"
-  },
-  {
-    "title": "Diagnostics - パート2",
-    "route": "/ja-JP/diagnostics/diagnostics-2",
-    "path": "docs/ja-JP/diagnostics/diagnostics-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではdiagnosticsについて説明します。",
-    "content": "# Diagnostics - パート2\n\nこのセクションではdiagnosticsについて説明します。"
-  },
-  {
-    "title": "Diagnostics - パート3",
-    "route": "/ja-JP/diagnostics/diagnostics-3",
-    "path": "docs/ja-JP/diagnostics/diagnostics-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではdiagnosticsについて説明します。",
-    "content": "# Diagnostics - パート3\n\nこのセクションではdiagnosticsについて説明します。"
-  },
-  {
-    "title": "Faq - パート 1",
-    "route": "/ja-JP/faq/faq-1",
-    "path": "docs/ja-JP/faq/faq-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではfaqについて説明します。",
-    "content": "# Faq - パート 1\n\nこのセクションではfaqについて説明します。"
-  },
-  {
-    "title": "Faq - パート 2",
-    "route": "/ja-JP/faq/faq-2",
-    "path": "docs/ja-JP/faq/faq-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではfaqについて説明します。",
-    "content": "# Faq - パート 2\n\nこのセクションではfaqについて説明します。"
-  },
-  {
-    "title": "Faq - パート 3",
-    "route": "/ja-JP/faq/faq-3",
-    "path": "docs/ja-JP/faq/faq-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではfaqについて説明します。",
-    "content": "# Faq - パート 3\n\nこのセクションではfaqについて説明します。"
-  },
-  {
-    "title": "Faq - パート 4",
-    "route": "/ja-JP/faq/faq-4",
-    "path": "docs/ja-JP/faq/faq-4.md",
-    "section": "ja-JP",
-    "summary": "このセクションではfaqについて説明します。",
-    "content": "# Faq - パート 4\n\nこのセクションではfaqについて説明します。"
-  },
-  {
-    "title": "Faq - パート 5",
-    "route": "/ja-JP/faq/faq-5",
-    "path": "docs/ja-JP/faq/faq-5.md",
-    "section": "ja-JP",
-    "summary": "このセクションではfaqについて説明します。",
-    "content": "# Faq - パート 5\n\nこのセクションではfaqについて説明します。"
-  },
-  {
-    "title": "Gateway - パート 1",
-    "route": "/ja-JP/gateway/gateway-1",
-    "path": "docs/ja-JP/gateway/gateway-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではgatewayについて説明します。",
-    "content": "# Gateway - パート 1\n\nこのセクションではgatewayについて説明します。"
-  },
-  {
-    "title": "Gateway - パート 2",
-    "route": "/ja-JP/gateway/gateway-2",
-    "path": "docs/ja-JP/gateway/gateway-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではgatewayについて説明します。",
-    "content": "# Gateway - パート 2\n\nこのセクションではgatewayについて説明します。"
-  },
-  {
-    "title": "Gateway - パート 3",
-    "route": "/ja-JP/gateway/gateway-3",
-    "path": "docs/ja-JP/gateway/gateway-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではgatewayについて説明します。",
-    "content": "# Gateway - パート 3\n\nこのセクションではgatewayについて説明します。"
-  },
-  {
-    "title": "Gateway - パート 4",
-    "route": "/ja-JP/gateway/gateway-4",
-    "path": "docs/ja-JP/gateway/gateway-4.md",
-    "section": "ja-JP",
-    "summary": "このセクションではgatewayについて説明します。",
-    "content": "# Gateway - パート 4\n\nこのセクションではgatewayについて説明します。"
-  },
-  {
-    "title": "Gateway - パート 5",
-    "route": "/ja-JP/gateway/gateway-5",
-    "path": "docs/ja-JP/gateway/gateway-5.md",
-    "section": "ja-JP",
-    "summary": "このセクションではgatewayについて説明します。",
-    "content": "# Gateway - パート 5\n\nこのセクションではgatewayについて説明します。"
-  },
-  {
-    "title": "Help - パート1",
-    "route": "/ja-JP/help/help-1",
-    "path": "docs/ja-JP/help/help-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではhelpについて説明します。",
-    "content": "# Help - パート1\n\nこのセクションではhelpについて説明します。"
-  },
-  {
-    "title": "Help - パート2",
-    "route": "/ja-JP/help/help-2",
-    "path": "docs/ja-JP/help/help-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではhelpについて説明します。",
-    "content": "# Help - パート2\n\nこのセクションではhelpについて説明します。"
-  },
-  {
-    "title": "Help - パート3",
-    "route": "/ja-JP/help/help-3",
-    "path": "docs/ja-JP/help/help-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではhelpについて説明します。",
-    "content": "# Help - パート3\n\nこのセクションではhelpについて説明します。"
-  },
-  {
-    "title": "CoreBlow ドキュメント",
-    "route": "/ja-JP",
-    "path": "docs/ja-JP/index.md",
-    "section": "ja-JP",
-    "summary": "CoreBlowへようこそ。",
-    "content": "# CoreBlow ドキュメント\n\nCoreBlowへようこそ。"
-  },
-  {
-    "title": "インストール",
-    "route": "/ja-JP/install",
-    "path": "docs/ja-JP/install.md",
-    "section": "ja-JP",
-    "summary": "",
-    "content": "# インストール\n\n```bash\nnpm install coreblow\n```"
-  },
-  {
-    "title": "Install - パート 1",
-    "route": "/ja-JP/install/install-1",
-    "path": "docs/ja-JP/install/install-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではinstallについて説明します。",
-    "content": "# Install - パート 1\n\nこのセクションではinstallについて説明します。"
-  },
-  {
-    "title": "Install - パート 2",
-    "route": "/ja-JP/install/install-2",
-    "path": "docs/ja-JP/install/install-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではinstallについて説明します。",
-    "content": "# Install - パート 2\n\nこのセクションではinstallについて説明します。"
-  },
-  {
-    "title": "Install - パート 3",
-    "route": "/ja-JP/install/install-3",
-    "path": "docs/ja-JP/install/install-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではinstallについて説明します。",
-    "content": "# Install - パート 3\n\nこのセクションではinstallについて説明します。"
-  },
-  {
-    "title": "Install - パート 4",
-    "route": "/ja-JP/install/install-4",
-    "path": "docs/ja-JP/install/install-4.md",
-    "section": "ja-JP",
-    "summary": "このセクションではinstallについて説明します。",
-    "content": "# Install - パート 4\n\nこのセクションではinstallについて説明します。"
-  },
-  {
-    "title": "Install - パート 5",
-    "route": "/ja-JP/install/install-5",
-    "path": "docs/ja-JP/install/install-5.md",
-    "section": "ja-JP",
-    "summary": "このセクションではinstallについて説明します。",
-    "content": "# Install - パート 5\n\nこのセクションではinstallについて説明します。"
-  },
-  {
-    "title": "Nodes - パート1",
-    "route": "/ja-JP/nodes/nodes-1",
-    "path": "docs/ja-JP/nodes/nodes-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではnodesについて説明します。",
-    "content": "# Nodes - パート1\n\nこのセクションではnodesについて説明します。"
-  },
-  {
-    "title": "Nodes - パート2",
-    "route": "/ja-JP/nodes/nodes-2",
-    "path": "docs/ja-JP/nodes/nodes-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではnodesについて説明します。",
-    "content": "# Nodes - パート2\n\nこのセクションではnodesについて説明します。"
-  },
-  {
-    "title": "Nodes - パート3",
-    "route": "/ja-JP/nodes/nodes-3",
-    "path": "docs/ja-JP/nodes/nodes-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではnodesについて説明します。",
-    "content": "# Nodes - パート3\n\nこのセクションではnodesについて説明します。"
-  },
-  {
-    "title": "Platforms - パート1",
-    "route": "/ja-JP/platforms/platforms-1",
-    "path": "docs/ja-JP/platforms/platforms-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではplatformsについて説明します。",
-    "content": "# Platforms - パート1\n\nこのセクションではplatformsについて説明します。"
-  },
-  {
-    "title": "Platforms - パート2",
-    "route": "/ja-JP/platforms/platforms-2",
-    "path": "docs/ja-JP/platforms/platforms-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではplatformsについて説明します。",
-    "content": "# Platforms - パート2\n\nこのセクションではplatformsについて説明します。"
-  },
-  {
-    "title": "Platforms - パート3",
-    "route": "/ja-JP/platforms/platforms-3",
-    "path": "docs/ja-JP/platforms/platforms-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではplatformsについて説明します。",
-    "content": "# Platforms - パート3\n\nこのセクションではplatformsについて説明します。"
-  },
-  {
-    "title": "Plugins - パート 1",
-    "route": "/ja-JP/plugins/plugins-1",
-    "path": "docs/ja-JP/plugins/plugins-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではpluginsについて説明します。",
-    "content": "# Plugins - パート 1\n\nこのセクションではpluginsについて説明します。"
-  },
-  {
-    "title": "Plugins - パート 2",
-    "route": "/ja-JP/plugins/plugins-2",
-    "path": "docs/ja-JP/plugins/plugins-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではpluginsについて説明します。",
-    "content": "# Plugins - パート 2\n\nこのセクションではpluginsについて説明します。"
-  },
-  {
-    "title": "Plugins - パート 3",
-    "route": "/ja-JP/plugins/plugins-3",
-    "path": "docs/ja-JP/plugins/plugins-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではpluginsについて説明します。",
-    "content": "# Plugins - パート 3\n\nこのセクションではpluginsについて説明します。"
-  },
-  {
-    "title": "Plugins - パート 4",
-    "route": "/ja-JP/plugins/plugins-4",
-    "path": "docs/ja-JP/plugins/plugins-4.md",
-    "section": "ja-JP",
-    "summary": "このセクションではpluginsについて説明します。",
-    "content": "# Plugins - パート 4\n\nこのセクションではpluginsについて説明します。"
-  },
-  {
-    "title": "Plugins - パート 5",
-    "route": "/ja-JP/plugins/plugins-5",
-    "path": "docs/ja-JP/plugins/plugins-5.md",
-    "section": "ja-JP",
-    "summary": "このセクションではpluginsについて説明します。",
-    "content": "# Plugins - パート 5\n\nこのセクションではpluginsについて説明します。"
-  },
-  {
-    "title": "Providers - パート 1",
-    "route": "/ja-JP/providers/providers-1",
-    "path": "docs/ja-JP/providers/providers-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではprovidersについて説明します。",
-    "content": "# Providers - パート 1\n\nこのセクションではprovidersについて説明します。"
-  },
-  {
-    "title": "Providers - パート 2",
-    "route": "/ja-JP/providers/providers-2",
-    "path": "docs/ja-JP/providers/providers-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではprovidersについて説明します。",
-    "content": "# Providers - パート 2\n\nこのセクションではprovidersについて説明します。"
-  },
-  {
-    "title": "Providers - パート 3",
-    "route": "/ja-JP/providers/providers-3",
-    "path": "docs/ja-JP/providers/providers-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではprovidersについて説明します。",
-    "content": "# Providers - パート 3\n\nこのセクションではprovidersについて説明します。"
-  },
-  {
-    "title": "Providers - パート 4",
-    "route": "/ja-JP/providers/providers-4",
-    "path": "docs/ja-JP/providers/providers-4.md",
-    "section": "ja-JP",
-    "summary": "このセクションではprovidersについて説明します。",
-    "content": "# Providers - パート 4\n\nこのセクションではprovidersについて説明します。"
-  },
-  {
-    "title": "Providers - パート 5",
-    "route": "/ja-JP/providers/providers-5",
-    "path": "docs/ja-JP/providers/providers-5.md",
-    "section": "ja-JP",
-    "summary": "このセクションではprovidersについて説明します。",
-    "content": "# Providers - パート 5\n\nこのセクションではprovidersについて説明します。"
-  },
-  {
-    "title": "Reference - パート1",
-    "route": "/ja-JP/reference/reference-1",
-    "path": "docs/ja-JP/reference/reference-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではreferenceについて説明します。",
-    "content": "# Reference - パート1\n\nこのセクションではreferenceについて説明します。"
-  },
-  {
-    "title": "Reference - パート2",
-    "route": "/ja-JP/reference/reference-2",
-    "path": "docs/ja-JP/reference/reference-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではreferenceについて説明します。",
-    "content": "# Reference - パート2\n\nこのセクションではreferenceについて説明します。"
-  },
-  {
-    "title": "Reference - パート3",
-    "route": "/ja-JP/reference/reference-3",
-    "path": "docs/ja-JP/reference/reference-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではreferenceについて説明します。",
-    "content": "# Reference - パート3\n\nこのセクションではreferenceについて説明します。"
-  },
-  {
-    "title": "Security - パート 1",
-    "route": "/ja-JP/security/security-1",
-    "path": "docs/ja-JP/security/security-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではsecurityについて説明します。",
-    "content": "# Security - パート 1\n\nこのセクションではsecurityについて説明します。"
-  },
-  {
-    "title": "Security - パート 2",
-    "route": "/ja-JP/security/security-2",
-    "path": "docs/ja-JP/security/security-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではsecurityについて説明します。",
-    "content": "# Security - パート 2\n\nこのセクションではsecurityについて説明します。"
-  },
-  {
-    "title": "Security - パート 3",
-    "route": "/ja-JP/security/security-3",
-    "path": "docs/ja-JP/security/security-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではsecurityについて説明します。",
-    "content": "# Security - パート 3\n\nこのセクションではsecurityについて説明します。"
-  },
-  {
-    "title": "Security - パート 4",
-    "route": "/ja-JP/security/security-4",
-    "path": "docs/ja-JP/security/security-4.md",
-    "section": "ja-JP",
-    "summary": "このセクションではsecurityについて説明します。",
-    "content": "# Security - パート 4\n\nこのセクションではsecurityについて説明します。"
-  },
-  {
-    "title": "Security - パート 5",
-    "route": "/ja-JP/security/security-5",
-    "path": "docs/ja-JP/security/security-5.md",
-    "section": "ja-JP",
-    "summary": "このセクションではsecurityについて説明します。",
-    "content": "# Security - パート 5\n\nこのセクションではsecurityについて説明します。"
-  },
-  {
-    "title": "Start - パート1",
-    "route": "/ja-JP/start/start-1",
-    "path": "docs/ja-JP/start/start-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではstartについて説明します。",
-    "content": "# Start - パート1\n\nこのセクションではstartについて説明します。"
-  },
-  {
-    "title": "Start - パート2",
-    "route": "/ja-JP/start/start-2",
-    "path": "docs/ja-JP/start/start-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではstartについて説明します。",
-    "content": "# Start - パート2\n\nこのセクションではstartについて説明します。"
-  },
-  {
-    "title": "Start - パート3",
-    "route": "/ja-JP/start/start-3",
-    "path": "docs/ja-JP/start/start-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではstartについて説明します。",
-    "content": "# Start - パート3\n\nこのセクションではstartについて説明します。"
-  },
-  {
-    "title": "Tools - パート 1",
-    "route": "/ja-JP/tools/tools-1",
-    "path": "docs/ja-JP/tools/tools-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではtoolsについて説明します。",
-    "content": "# Tools - パート 1\n\nこのセクションではtoolsについて説明します。"
-  },
-  {
-    "title": "Tools - パート 2",
-    "route": "/ja-JP/tools/tools-2",
-    "path": "docs/ja-JP/tools/tools-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではtoolsについて説明します。",
-    "content": "# Tools - パート 2\n\nこのセクションではtoolsについて説明します。"
-  },
-  {
-    "title": "Tools - パート 3",
-    "route": "/ja-JP/tools/tools-3",
-    "path": "docs/ja-JP/tools/tools-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではtoolsについて説明します。",
-    "content": "# Tools - パート 3\n\nこのセクションではtoolsについて説明します。"
-  },
-  {
-    "title": "Tools - パート 4",
-    "route": "/ja-JP/tools/tools-4",
-    "path": "docs/ja-JP/tools/tools-4.md",
-    "section": "ja-JP",
-    "summary": "このセクションではtoolsについて説明します。",
-    "content": "# Tools - パート 4\n\nこのセクションではtoolsについて説明します。"
-  },
-  {
-    "title": "Tools - パート 5",
-    "route": "/ja-JP/tools/tools-5",
-    "path": "docs/ja-JP/tools/tools-5.md",
-    "section": "ja-JP",
-    "summary": "このセクションではtoolsについて説明します。",
-    "content": "# Tools - パート 5\n\nこのセクションではtoolsについて説明します。"
-  },
-  {
-    "title": "Web - パート1",
-    "route": "/ja-JP/web/web-1",
-    "path": "docs/ja-JP/web/web-1.md",
-    "section": "ja-JP",
-    "summary": "このセクションではwebについて説明します。",
-    "content": "# Web - パート1\n\nこのセクションではwebについて説明します。"
-  },
-  {
-    "title": "Web - パート2",
-    "route": "/ja-JP/web/web-2",
-    "path": "docs/ja-JP/web/web-2.md",
-    "section": "ja-JP",
-    "summary": "このセクションではwebについて説明します。",
-    "content": "# Web - パート2\n\nこのセクションではwebについて説明します。"
-  },
-  {
-    "title": "Web - パート3",
-    "route": "/ja-JP/web/web-3",
-    "path": "docs/ja-JP/web/web-3.md",
-    "section": "ja-JP",
-    "summary": "このセクションではwebについて説明します。",
-    "content": "# Web - パート3\n\nこのセクションではwebについて説明します。"
-  },
-  {
-    "title": "Channels 가이드",
-    "route": "/ko-KR/channels/channels-guide",
-    "path": "docs/ko-KR/channels/channels-guide.md",
-    "section": "ko-KR",
-    "summary": "channels 사용법을 안내합니다.",
-    "content": "# Channels 가이드\n\nchannels 사용법을 안내합니다."
-  },
-  {
-    "title": "Channels 개요",
-    "route": "/ko-KR/channels/channels-overview",
-    "path": "docs/ko-KR/channels/channels-overview.md",
-    "section": "ko-KR",
-    "summary": "이 섹션에서는 channels에 대해 설명합니다.",
-    "content": "# Channels 개요\n\n이 섹션에서는 channels에 대해 설명합니다."
-  },
-  {
-    "title": "Concepts 가이드",
-    "route": "/ko-KR/concepts/concepts-guide",
-    "path": "docs/ko-KR/concepts/concepts-guide.md",
-    "section": "ko-KR",
-    "summary": "concepts 사용법을 안내합니다.",
-    "content": "# Concepts 가이드\n\nconcepts 사용법을 안내합니다."
-  },
-  {
-    "title": "Concepts 개요",
-    "route": "/ko-KR/concepts/concepts-overview",
-    "path": "docs/ko-KR/concepts/concepts-overview.md",
-    "section": "ko-KR",
-    "summary": "이 섹션에서는 concepts에 대해 설명합니다.",
-    "content": "# Concepts 개요\n\n이 섹션에서는 concepts에 대해 설명합니다."
-  },
-  {
-    "title": "Plugins 가이드",
-    "route": "/ko-KR/plugins/plugins-guide",
-    "path": "docs/ko-KR/plugins/plugins-guide.md",
-    "section": "ko-KR",
-    "summary": "plugins 사용법을 안내합니다.",
-    "content": "# Plugins 가이드\n\nplugins 사용법을 안내합니다."
-  },
-  {
-    "title": "Plugins 개요",
-    "route": "/ko-KR/plugins/plugins-overview",
-    "path": "docs/ko-KR/plugins/plugins-overview.md",
-    "section": "ko-KR",
-    "summary": "이 섹션에서는 plugins에 대해 설명합니다.",
-    "content": "# Plugins 개요\n\n이 섹션에서는 plugins에 대해 설명합니다."
-  },
-  {
-    "title": "Providers 가이드",
-    "route": "/ko-KR/providers/providers-guide",
-    "path": "docs/ko-KR/providers/providers-guide.md",
-    "section": "ko-KR",
-    "summary": "providers 사용법을 안내합니다.",
-    "content": "# Providers 가이드\n\nproviders 사용법을 안내합니다."
-  },
-  {
-    "title": "Providers 개요",
-    "route": "/ko-KR/providers/providers-overview",
-    "path": "docs/ko-KR/providers/providers-overview.md",
-    "section": "ko-KR",
-    "summary": "이 섹션에서는 providers에 대해 설명합니다.",
-    "content": "# Providers 개요\n\n이 섹션에서는 providers에 대해 설명합니다."
-  },
-  {
-    "title": "Security 가이드",
-    "route": "/ko-KR/security/security-guide",
-    "path": "docs/ko-KR/security/security-guide.md",
-    "section": "ko-KR",
-    "summary": "security 사용법을 안내합니다.",
-    "content": "# Security 가이드\n\nsecurity 사용법을 안내합니다."
-  },
-  {
-    "title": "Security 개요",
-    "route": "/ko-KR/security/security-overview",
-    "path": "docs/ko-KR/security/security-overview.md",
-    "section": "ko-KR",
-    "summary": "이 섹션에서는 security에 대해 설명합니다.",
-    "content": "# Security 개요\n\n이 섹션에서는 security에 대해 설명합니다."
   },
   {
     "title": "Logging",
@@ -5617,3 +4905,370 @@ export const DOCS = [
     "content": "# Web: Web Ui\n\nWeb interface: web ui."
   }
 ];
+export const DOCS_CONFIG = {
+  "$schema": "https://mintlify.com/docs.json",
+  "title": "CoreBlow Docs",
+  "name": "CoreBlow",
+  "description": "CoreBlow documentation for installation, CLI, channels, plugins, CoreHub, gateway, and operations.",
+  "version": "0.1.0",
+  "navigation": {
+    "languages": [
+      {
+        "language": "en",
+        "tabs": [
+          {
+            "tab": "Start",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  {
+                    "label": "Home",
+                    "page": "index"
+                  },
+                  {
+                    "label": "Architecture",
+                    "page": "architecture"
+                  },
+                  {
+                    "label": "Configuration",
+                    "page": "configuration"
+                  },
+                  {
+                    "label": "Security Model",
+                    "page": "security-model"
+                  },
+                  {
+                    "label": "Telemetry",
+                    "page": "telemetry"
+                  }
+                ]
+              },
+              {
+                "group": "First steps",
+                "pages": [
+                  {
+                    "label": "Quickstart",
+                    "page": "start/quickstart"
+                  },
+                  {
+                    "label": "Install",
+                    "page": "install/index"
+                  },
+                  {
+                    "label": "Docker",
+                    "page": "install/docker"
+                  },
+                  {
+                    "label": "Linux",
+                    "page": "install/linux"
+                  },
+                  {
+                    "label": "macOS",
+                    "page": "install/macos"
+                  },
+                  {
+                    "label": "Windows",
+                    "page": "install/windows"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "CLI",
+            "groups": [
+              {
+                "group": "CLI",
+                "pages": [
+                  {
+                    "label": "Overview",
+                    "page": "cli/index"
+                  },
+                  {
+                    "label": "Commands",
+                    "page": "cli/commands"
+                  },
+                  {
+                    "label": "Setup",
+                    "page": "cli/setup"
+                  },
+                  {
+                    "label": "Configure",
+                    "page": "cli/configure"
+                  },
+                  {
+                    "label": "Doctor",
+                    "page": "cli/doctor"
+                  },
+                  {
+                    "label": "Plugins",
+                    "page": "cli/plugins"
+                  },
+                  {
+                    "label": "Channels",
+                    "page": "cli/channels"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Channels",
+            "groups": [
+              {
+                "group": "Channels",
+                "pages": [
+                  {
+                    "label": "Overview",
+                    "page": "channels/index"
+                  },
+                  {
+                    "label": "Discord",
+                    "page": "channels/discord"
+                  },
+                  {
+                    "label": "Slack",
+                    "page": "channels/slack"
+                  },
+                  {
+                    "label": "Telegram",
+                    "page": "channels/telegram"
+                  },
+                  {
+                    "label": "WhatsApp",
+                    "page": "channels/whatsapp"
+                  },
+                  {
+                    "label": "Signal",
+                    "page": "channels/signal"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Plugins",
+            "groups": [
+              {
+                "group": "Build plugins",
+                "pages": [
+                  {
+                    "label": "Plugin Overview",
+                    "page": "plugins/index"
+                  },
+                  {
+                    "label": "Plugin SDK",
+                    "page": "plugins/sdk"
+                  },
+                  {
+                    "label": "Tools",
+                    "page": "tools/index"
+                  },
+                  {
+                    "label": "Providers",
+                    "page": "providers/index"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "CoreHub",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  {
+                    "label": "Overview",
+                    "page": "corehub/index"
+                  },
+                  {
+                    "label": "Quickstart",
+                    "page": "corehub/quickstart"
+                  }
+                ]
+              },
+              {
+                "group": "Using CoreHub",
+                "pages": [
+                  {
+                    "label": "CLI",
+                    "page": "corehub/cli"
+                  }
+                ]
+              },
+              {
+                "group": "API and trust",
+                "pages": [
+                  {
+                    "label": "Registry API",
+                    "page": "corehub/api"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Gateway",
+            "groups": [
+              {
+                "group": "Gateway",
+                "pages": [
+                  {
+                    "label": "Overview",
+                    "page": "gateway/index"
+                  },
+                  {
+                    "label": "Gateway API",
+                    "page": "gateway/api"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Reference",
+            "groups": [
+              {
+                "group": "Reference",
+                "pages": [
+                  {
+                    "label": "CLI Reference",
+                    "page": "reference/cli-reference"
+                  },
+                  {
+                    "label": "Config Reference",
+                    "page": "reference/config-reference"
+                  },
+                  {
+                    "label": "Plugin API",
+                    "page": "reference/plugin-api"
+                  },
+                  {
+                    "label": "Provider API",
+                    "page": "reference/provider-api"
+                  },
+                  {
+                    "label": "Gateway API Reference",
+                    "page": "api-reference"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Help",
+            "groups": [
+              {
+                "group": "Help",
+                "pages": [
+                  {
+                    "label": "Troubleshooting",
+                    "page": "help/troubleshooting"
+                  },
+                  {
+                    "label": "FAQ",
+                    "page": "help/faq"
+                  },
+                  {
+                    "label": "Common Errors",
+                    "page": "help/common-errors"
+                  },
+                  {
+                    "label": "Debugging",
+                    "page": "debug/overview-debug"
+                  },
+                  {
+                    "label": "Support Channels",
+                    "page": "support-channels"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "sections": [
+    "docs/index.md",
+    "docs/install/index.md",
+    "docs/install/docker.md",
+    "docs/install/linux.md",
+    "docs/install/macos.md",
+    "docs/install/windows.md",
+    "docs/cli/index.md",
+    "docs/cli/commands.md",
+    "docs/cli/setup.md",
+    "docs/cli/onboard.md",
+    "docs/cli/configure.md",
+    "docs/cli/config.md",
+    "docs/cli/completion.md",
+    "docs/cli/doctor.md",
+    "docs/cli/dashboard.md",
+    "docs/cli/backup.md",
+    "docs/cli/reset.md",
+    "docs/cli/uninstall.md",
+    "docs/cli/update.md",
+    "docs/cli/message.md",
+    "docs/cli/agent.md",
+    "docs/cli/agents.md",
+    "docs/cli/acp.md",
+    "docs/cli/mcp.md",
+    "docs/cli/status.md",
+    "docs/cli/health.md",
+    "docs/cli/sessions.md",
+    "docs/cli/gateway.md",
+    "docs/cli/logs.md",
+    "docs/cli/system.md",
+    "docs/cli/models.md",
+    "docs/cli/directory.md",
+    "docs/cli/nodes.md",
+    "docs/cli/node.md",
+    "docs/cli/devices.md",
+    "docs/cli/approvals.md",
+    "docs/cli/sandbox.md",
+    "docs/cli/tui.md",
+    "docs/cli/cron.md",
+    "docs/cli/dns.md",
+    "docs/cli/docs.md",
+    "docs/cli/hooks.md",
+    "docs/cli/webhooks.md",
+    "docs/cli/pairing.md",
+    "docs/cli/qr.md",
+    "docs/cli/plugins.md",
+    "docs/cli/channels.md",
+    "docs/cli/security.md",
+    "docs/cli/secrets.md",
+    "docs/cli/skills.md",
+    "docs/cli/daemon.md",
+    "docs/cli/corebot.md",
+    "docs/providers/index.md",
+    "docs/providers/openai.md",
+    "docs/providers/anthropic.md",
+    "docs/providers/google.md",
+    "docs/providers/ollama.md",
+    "docs/channels/index.md",
+    "docs/channels/discord.md",
+    "docs/channels/slack.md",
+    "docs/channels/telegram.md",
+    "docs/channels/whatsapp.md",
+    "docs/security/index.md",
+    "docs/security/authentication.md",
+    "docs/security/encryption.md",
+    "docs/plugins/index.md",
+    "docs/plugins/sdk.md",
+    "docs/corehub/index.md",
+    "docs/corehub/quickstart.md",
+    "docs/corehub/cli.md",
+    "docs/corehub/api.md",
+    "docs/gateway/index.md",
+    "docs/gateway/api.md",
+    "docs/concepts/agents.md",
+    "docs/concepts/tools.md",
+    "docs/concepts/memory.md",
+    "docs/tools/index.md",
+    "docs/start/quickstart.md"
+  ]
+};

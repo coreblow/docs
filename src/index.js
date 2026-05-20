@@ -1,47 +1,9 @@
-import { DOCS } from "./docs.generated.js";
+import { DOCS, DOCS_CONFIG } from "./docs.generated.js";
 
 const docsByRoute = new Map(DOCS.map((doc) => [doc.route, doc]));
 const sections = [...new Set(DOCS.map((doc) => doc.section))].sort((a, b) => a.localeCompare(b));
-const topNav = [
-  { label: "Get started", route: "/start/quickstart" },
-  { label: "Install", route: "/install" },
-  { label: "CLI", route: "/cli" },
-  { label: "Channels", route: "/channels" },
-  { label: "Plugins", route: "/plugins" },
-  { label: "Gateway & Ops", route: "/gateway" },
-  { label: "Reference", route: "/reference" },
-  { label: "Help", route: "/help" },
-];
-const navGroups = [
-  {
-    title: "Overview",
-    routes: ["/", "/architecture", "/configuration", "/security-model", "/telemetry"],
-  },
-  {
-    title: "First steps",
-    routes: ["/start/quickstart", "/install", "/install/docker", "/install/linux", "/install/macos", "/install/windows"],
-  },
-  {
-    title: "CLI",
-    routes: ["/cli", "/cli/commands", "/cli/setup", "/cli/configure", "/cli/doctor", "/cli/plugins", "/cli/channels"],
-  },
-  {
-    title: "Channels",
-    routes: ["/channels", "/channels/discord", "/channels/slack", "/channels/telegram", "/channels/whatsapp", "/channels/signal"],
-  },
-  {
-    title: "Build",
-    routes: ["/plugins", "/plugins/sdk", "/tools", "/providers", "/gateway", "/gateway/api"],
-  },
-  {
-    title: "Reference",
-    routes: ["/reference/cli-reference", "/reference/config-reference", "/reference/plugin-api", "/reference/provider-api", "/api-reference"],
-  },
-  {
-    title: "Help",
-    routes: ["/help/troubleshooting", "/help/faq", "/help/common-errors", "/debug/overview-debug", "/support-channels"],
-  },
-];
+const navTabs = buildNavTabs(DOCS_CONFIG);
+const topNav = navTabs.map((tab) => ({ label: tab.label, route: tab.route }));
 const searchIndex = DOCS.map(({ content, ...doc }) => doc);
 
 export default {
@@ -334,6 +296,32 @@ function renderShell(content, options = {}) {
       padding: 4px 0 4px 16px;
       color: var(--muted);
     }
+    .doc-body table {
+      width: 100%;
+      margin: 18px 0;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      display: block;
+      max-width: 100%;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .doc-body thead { background: var(--surface-2); }
+    .doc-body th,
+    .doc-body td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .doc-body th {
+      color: #334155;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+    .doc-body tr:last-child td { border-bottom: 0; }
     .command-modal {
       position: fixed;
       inset: 0;
@@ -523,18 +511,100 @@ function renderHome() {
 }
 
 function renderSidebar(activeRoute) {
-  const groups = navGroups
+  const activeTab = findActiveTab(activeRoute);
+  const groups = activeTab.groups
     .map((group) => {
-      const links = group.routes
-        .map((route) => findDoc(route))
-        .filter(Boolean)
-        .map((doc) => `<a class="${isActiveRoute(activeRoute, doc.route) ? "active" : ""}" href="${escapeAttr(doc.route)}">${escapeHtml(doc.title)}</a>`)
+      const links = group.pages
+        .map(({ doc, label }) => `<a class="${isCurrentRoute(activeRoute, doc.route) ? "active" : ""}" href="${escapeAttr(doc.route)}">${escapeHtml(label)}</a>`)
         .join("");
       if (!links) return "";
       return `<div class="sidebar-group"><h2>${escapeHtml(group.title)}</h2>${links}</div>`;
     })
     .join("");
   return `<aside class="sidebar">${groups}</aside>`;
+}
+
+function buildNavTabs(config) {
+  const configuredTabs = extractConfiguredTabs(config);
+  const tabs = configuredTabs.map(normalizeNavTab).filter((tab) => tab.groups.length);
+  if (tabs.length) return tabs;
+
+  return [
+    {
+      label: "Docs",
+      route: "/",
+      groups: [
+        {
+          title: "Overview",
+          pages: [
+            navPage("index", "Home"),
+            navPage("architecture", "Architecture"),
+            navPage("configuration", "Configuration"),
+          ].filter(Boolean),
+        },
+      ],
+    },
+  ];
+}
+
+function extractConfiguredTabs(config) {
+  const navigation = config?.navigation;
+  if (!navigation || typeof navigation !== "object") return [];
+  if (Array.isArray(navigation.tabs)) return navigation.tabs;
+  const languages = Array.isArray(navigation.languages) ? navigation.languages : [];
+  const english = languages.find((item) => item?.language === "en") ?? languages[0];
+  return Array.isArray(english?.tabs) ? english.tabs : [];
+}
+
+function normalizeNavTab(tab) {
+  const groups = (Array.isArray(tab?.groups) ? tab.groups : [])
+    .map((group) => ({
+      title: String(group?.group ?? group?.title ?? "Docs"),
+      pages: normalizeNavPages(group?.pages),
+    }))
+    .filter((group) => group.pages.length);
+  const route = groups[0]?.pages[0]?.doc.route ?? "/";
+  return {
+    label: String(tab?.tab ?? tab?.label ?? "Docs"),
+    route,
+    groups,
+  };
+}
+
+function normalizeNavPages(pages) {
+  if (!Array.isArray(pages)) return [];
+  return pages
+    .flatMap((page) => {
+      if (typeof page === "string") return [navPage(page)];
+      if (!page || typeof page !== "object") return [];
+      if (typeof page.page === "string") return [navPage(page.page, page.label ?? page.title)];
+      if (Array.isArray(page.pages)) return normalizeNavPages(page.pages);
+      return [];
+    })
+    .filter(Boolean);
+}
+
+function navPage(page, label) {
+  const route = routeFromConfigPage(page);
+  const doc = findDoc(route);
+  if (!doc) return null;
+  return { doc, label: label ? String(label) : doc.title };
+}
+
+function routeFromConfigPage(page) {
+  let value = String(page ?? "").trim();
+  value = value.replace(/^docs\//, "").replace(/\.(md|mdx)$/i, "");
+  if (value === "index") return "/";
+  if (value.endsWith("/index")) value = value.slice(0, -"/index".length);
+  return normalizeRoute(`/${value}`);
+}
+
+function findActiveTab(activeRoute) {
+  return (
+    navTabs.find((tab) =>
+      tab.groups.some((group) => group.pages.some(({ doc }) => isActiveRoute(activeRoute, doc.route))),
+    ) ?? navTabs[0]
+  );
 }
 
 function renderToc(items) {
@@ -636,7 +706,8 @@ function markdownToHtml(markdown, options = {}) {
     listType = null;
   };
 
-  for (const line of lines) {
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
     if (line.startsWith("```")) {
       flushParagraph();
       closeList();
@@ -658,6 +729,20 @@ function markdownToHtml(markdown, options = {}) {
     if (!line.trim()) {
       flushParagraph();
       closeList();
+      continue;
+    }
+
+    if (isTableStart(lines, index)) {
+      flushParagraph();
+      closeList();
+      const tableLines = [line, lines[index + 1]];
+      index += 2;
+      while (index < lines.length && isTableRow(lines[index])) {
+        tableLines.push(lines[index]);
+        index += 1;
+      }
+      index -= 1;
+      html.push(renderTable(tableLines));
       continue;
     }
 
@@ -713,6 +798,40 @@ function markdownToHtml(markdown, options = {}) {
   return html.join("\n");
 }
 
+function isTableStart(lines, index) {
+  return isTableRow(lines[index]) && isTableSeparator(lines[index + 1]);
+}
+
+function isTableRow(line) {
+  return typeof line === "string" && /^\s*\|.+\|\s*$/.test(line);
+}
+
+function isTableSeparator(line) {
+  if (!isTableRow(line)) return false;
+  return splitTableRow(line).every((cell) => /^:?-{3,}:?$/.test(cell.trim()));
+}
+
+function splitTableRow(line) {
+  return line
+    .trim()
+    .replace(/^\||\|$/g, "")
+    .split("|")
+    .map((cell) => cell.trim());
+}
+
+function renderTable(lines) {
+  const headers = splitTableRow(lines[0]);
+  const rows = lines.slice(2).map(splitTableRow);
+  return `<table>
+<thead><tr>${headers.map((header) => `<th>${renderInline(header)}</th>`).join("")}</tr></thead>
+<tbody>
+${rows
+  .map((row) => `<tr>${headers.map((_, index) => `<td>${renderInline(row[index] ?? "")}</td>`).join("")}</tr>`)
+  .join("\n")}
+</tbody>
+</table>`;
+}
+
 function extractHeadings(markdown) {
   return markdown
     .replace(/\r\n/g, "\n")
@@ -737,6 +856,10 @@ function isActiveRoute(activeRoute, candidate) {
   if (!activeRoute) return false;
   if (activeRoute === candidate) return true;
   return candidate !== "/" && activeRoute.startsWith(`${candidate}/`);
+}
+
+function isCurrentRoute(activeRoute, candidate) {
+  return activeRoute === candidate;
 }
 
 function renderInline(value) {

@@ -1,6 +1,289 @@
 {
+  "$schema": "https://mintlify.com/docs.json",
   "title": "CoreBlow Docs",
+  "name": "CoreBlow",
+  "description": "CoreBlow documentation for installation, CLI, channels, plugins, CoreHub, gateway, and operations.",
   "version": "0.1.0",
+  "navigation": {
+    "languages": [
+      {
+        "language": "en",
+        "tabs": [
+          {
+            "tab": "Start",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  {
+                    "label": "Home",
+                    "page": "index"
+                  },
+                  {
+                    "label": "Architecture",
+                    "page": "architecture"
+                  },
+                  {
+                    "label": "Configuration",
+                    "page": "configuration"
+                  },
+                  {
+                    "label": "Security Model",
+                    "page": "security-model"
+                  },
+                  {
+                    "label": "Telemetry",
+                    "page": "telemetry"
+                  }
+                ]
+              },
+              {
+                "group": "First steps",
+                "pages": [
+                  {
+                    "label": "Quickstart",
+                    "page": "start/quickstart"
+                  },
+                  {
+                    "label": "Install",
+                    "page": "install/index"
+                  },
+                  {
+                    "label": "Docker",
+                    "page": "install/docker"
+                  },
+                  {
+                    "label": "Linux",
+                    "page": "install/linux"
+                  },
+                  {
+                    "label": "macOS",
+                    "page": "install/macos"
+                  },
+                  {
+                    "label": "Windows",
+                    "page": "install/windows"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "CLI",
+            "groups": [
+              {
+                "group": "CLI",
+                "pages": [
+                  {
+                    "label": "Overview",
+                    "page": "cli/index"
+                  },
+                  {
+                    "label": "Commands",
+                    "page": "cli/commands"
+                  },
+                  {
+                    "label": "Setup",
+                    "page": "cli/setup"
+                  },
+                  {
+                    "label": "Configure",
+                    "page": "cli/configure"
+                  },
+                  {
+                    "label": "Doctor",
+                    "page": "cli/doctor"
+                  },
+                  {
+                    "label": "Plugins",
+                    "page": "cli/plugins"
+                  },
+                  {
+                    "label": "Channels",
+                    "page": "cli/channels"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Channels",
+            "groups": [
+              {
+                "group": "Channels",
+                "pages": [
+                  {
+                    "label": "Overview",
+                    "page": "channels/index"
+                  },
+                  {
+                    "label": "Discord",
+                    "page": "channels/discord"
+                  },
+                  {
+                    "label": "Slack",
+                    "page": "channels/slack"
+                  },
+                  {
+                    "label": "Telegram",
+                    "page": "channels/telegram"
+                  },
+                  {
+                    "label": "WhatsApp",
+                    "page": "channels/whatsapp"
+                  },
+                  {
+                    "label": "Signal",
+                    "page": "channels/signal"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Plugins",
+            "groups": [
+              {
+                "group": "Build plugins",
+                "pages": [
+                  {
+                    "label": "Plugin Overview",
+                    "page": "plugins/index"
+                  },
+                  {
+                    "label": "Plugin SDK",
+                    "page": "plugins/sdk"
+                  },
+                  {
+                    "label": "Tools",
+                    "page": "tools/index"
+                  },
+                  {
+                    "label": "Providers",
+                    "page": "providers/index"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "CoreHub",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  {
+                    "label": "Overview",
+                    "page": "corehub/index"
+                  },
+                  {
+                    "label": "Quickstart",
+                    "page": "corehub/quickstart"
+                  }
+                ]
+              },
+              {
+                "group": "Using CoreHub",
+                "pages": [
+                  {
+                    "label": "CLI",
+                    "page": "corehub/cli"
+                  }
+                ]
+              },
+              {
+                "group": "API and trust",
+                "pages": [
+                  {
+                    "label": "Registry API",
+                    "page": "corehub/api"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Gateway",
+            "groups": [
+              {
+                "group": "Gateway",
+                "pages": [
+                  {
+                    "label": "Overview",
+                    "page": "gateway/index"
+                  },
+                  {
+                    "label": "Gateway API",
+                    "page": "gateway/api"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Reference",
+            "groups": [
+              {
+                "group": "Reference",
+                "pages": [
+                  {
+                    "label": "CLI Reference",
+                    "page": "reference/cli-reference"
+                  },
+                  {
+                    "label": "Config Reference",
+                    "page": "reference/config-reference"
+                  },
+                  {
+                    "label": "Plugin API",
+                    "page": "reference/plugin-api"
+                  },
+                  {
+                    "label": "Provider API",
+                    "page": "reference/provider-api"
+                  },
+                  {
+                    "label": "Gateway API Reference",
+                    "page": "api-reference"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Help",
+            "groups": [
+              {
+                "group": "Help",
+                "pages": [
+                  {
+                    "label": "Troubleshooting",
+                    "page": "help/troubleshooting"
+                  },
+                  {
+                    "label": "FAQ",
+                    "page": "help/faq"
+                  },
+                  {
+                    "label": "Common Errors",
+                    "page": "help/common-errors"
+                  },
+                  {
+                    "label": "Debugging",
+                    "page": "debug/overview-debug"
+                  },
+                  {
+                    "label": "Support Channels",
+                    "page": "support-channels"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "sections": [
     "docs/index.md",
     "docs/install/index.md",
@@ -69,6 +352,10 @@
     "docs/security/encryption.md",
     "docs/plugins/index.md",
     "docs/plugins/sdk.md",
+    "docs/corehub/index.md",
+    "docs/corehub/quickstart.md",
+    "docs/corehub/cli.md",
+    "docs/corehub/api.md",
     "docs/gateway/index.md",
     "docs/gateway/api.md",
     "docs/concepts/agents.md",
