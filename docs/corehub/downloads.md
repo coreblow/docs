@@ -10,7 +10,7 @@ CoreHub downloads are storage-backed redirects. The registry validates package m
 4. CoreHub signs the redirect metadata.
 5. CoreHub returns a `302` redirect to the storage URL.
 
-CLI clients use `redirect=false` so they can inspect the signed download contract as JSON before fetching the storage URL.
+CLI clients use `redirect=false` so they can inspect the signed download contract as JSON before fetching the storage URL. When `--output` is provided, the CLI fetches the signed URL and verifies the artifact before writing it.
 
 ## Storage Shape
 
@@ -61,8 +61,9 @@ The JSON response includes:
 
 ```sh
 npm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub
+npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
 ```
 
-The CLI requests `redirect=false` and prints the signed download metadata instead of following the redirect automatically.
+Without `--output`, the CLI requests `redirect=false` and prints the signed download metadata. With `--output`, it fetches the signed storage URL, verifies `artifact.size` and `artifact.sha256`, then writes the artifact to disk.
 
 For the security model behind this flow, see the [Trust Model](/corehub/trust-model). For endpoint details and status codes, see the [Registry API](/corehub/api).

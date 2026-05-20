@@ -50,6 +50,8 @@ Artifact manifests include byte size and SHA-256 checksum metadata. Clients shou
 | `artifact.files` | File list must match expected manifest content when present. |
 | `artifact.provenance.source` | Source repository must match the package record. |
 
+The CoreHub CLI enforces the size and SHA-256 checks when `corehub package download <id> --output <path>` is used. If either check fails, the command stops before writing the artifact.
+
 ## Storage Locator
 
 The artifact `storage` block separates registry trust metadata from the physical storage provider. CoreHub can point at GitHub raw storage today and add R2 or S3-compatible storage without changing the package API shape.

@@ -49,13 +49,14 @@ npm run corehub -- package versions plugin-lab --registry https://coreblow.com/c
 npm run corehub -- package artifact plugin-lab --registry https://coreblow.com/corehub
 ```
 
-5. Read signed download metadata:
+5. Read signed download metadata or write a verified artifact:
 
 ```sh
 npm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub
+npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
 ```
 
-The CLI requests `redirect=false` from the Registry API. It prints the package, publisher, artifact checksum, storage URL, and signature metadata instead of following the redirect automatically.
+Without `--output`, the CLI requests `redirect=false` from the Registry API and prints the package, publisher, artifact checksum, storage URL, and signature metadata. With `--output`, it fetches the signed storage URL, verifies the downloaded byte count and SHA-256 checksum, and writes the artifact only after verification passes.
 
 ## Package-Compatible Commands
 
@@ -69,6 +70,7 @@ npm run corehub -- package versions plugin-lab
 npm run corehub -- package files plugin-lab
 npm run corehub -- package artifact plugin-lab
 npm run corehub -- package download plugin-lab
+npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json
 ```
 
 ## Hosted Registry Reads
@@ -85,6 +87,7 @@ npm run corehub -- package versions plugin-lab --registry https://coreblow.com/c
 npm run corehub -- package files plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package artifact plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub
+npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
 npm run corehub -- registry info --registry https://coreblow.com/corehub
 ```
 
@@ -96,7 +99,7 @@ COREHUB_REGISTRY=https://coreblow.com/corehub
 
 ## Download Verification
 
-Current CLI download output is metadata-first. Before an installer writes files, it should compare the fetched artifact with:
+CoreHub CLI downloads are metadata-first unless an output path is provided. Before writing a file, the CLI compares the fetched artifact with:
 
 | Field | Required check |
 | --- | --- |
@@ -105,7 +108,13 @@ Current CLI download output is metadata-first. Before an installer writes files,
 | `artifact.storage.key` | Storage path should match the signed redirect contract. |
 | `download.signature` | Signature should be tied to package, version, checksum, storage key, and expiry. |
 
-The next CLI implementation step is a verified `--output <path>` mode that follows the signed URL, writes the artifact, and fails closed on checksum or size mismatch.
+Use `--output <path>` to perform the verified fetch:
+
+```sh
+npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+```
+
+If the byte count or SHA-256 checksum does not match the artifact manifest, the command fails before writing the output file.
 
 For the signed redirect behavior behind this command, see [Downloads](/corehub/downloads). For the full trust chain, see [Trust Model](/corehub/trust-model).
 
@@ -126,6 +135,6 @@ For the signed redirect behavior behind this command, see [Downloads](/corehub/d
 | `corehub package versions <id>` | Available | Show publisher-owned version metadata. |
 | `corehub package files <id>` | Available | Show file metadata from the artifact manifest. |
 | `corehub package artifact <id>` | Available | Show artifact manifest metadata, checksum, provenance, and download policy. |
-| `corehub package download <id>` | Available | Print signed download metadata for storage-backed artifacts. |
+| `corehub package download <id>` | Available | Print signed download metadata or write a verified artifact with `--output`. |
 | `corehub package publish <source>` | Planned | Publish package artifacts after registry writes land. |
 | `corehub registry info` | Available | Read the API discovery document. |
