@@ -19,6 +19,7 @@ This repository follows the same ecosystem split that CoreBlow uses to keep rele
 ## Scope
 
 - Docs site content.
+- Cloudflare Worker for `https://docs.coreblow.com`.
 - Link and glossary checks.
 - Public guidance for installation, configuration, and operations.
 
@@ -37,13 +38,28 @@ This repository follows the same ecosystem split that CoreBlow uses to keep rele
 - `docs/adr/005-plugin-architecture.md`
 - `docs/adr/006-memory-backends.md`
 - `docs/adr/007-agent-framework.md`
+- `src/index.js`
+- `src/docs.generated.js`
+- `wrangler.toml`
 
 ## Development
 
 ### Docs check
 
 ```sh
-npm run docs:check
+pnpm check
+```
+
+### Develop
+
+```sh
+pnpm dev
+```
+
+### Deploy
+
+```sh
+pnpm deploy
 ```
 
 ## Release Policy
