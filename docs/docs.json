@@ -192,6 +192,10 @@
                   {
                     "label": "Publisher Identity",
                     "page": "corehub/publisher-identity"
+                  },
+                  {
+                    "label": "Versions and Artifacts",
+                    "page": "corehub/versions-and-artifacts"
                   }
                 ]
               },
@@ -360,6 +364,7 @@
     "docs/corehub/quickstart.md",
     "docs/corehub/cli.md",
     "docs/corehub/publisher-identity.md",
+    "docs/corehub/versions-and-artifacts.md",
     "docs/corehub/api.md",
     "docs/gateway/index.md",
     "docs/gateway/api.md",

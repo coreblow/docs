@@ -71,9 +71,9 @@ COREHUB_REGISTRY=https://coreblow.com/corehub
 | `corehub package explore` | Available | Package-compatible list command. |
 | `corehub package search <query>` | Available | Package-compatible search command. |
 | `corehub package inspect <id>` | Available | Inspect one package-compatible entry. |
-| `corehub package versions <id>` | Available | Show static latest version metadata. |
-| `corehub package files <id>` | Available | Show file metadata. Static-catalog entries currently return an empty file list. |
-| `corehub package artifact <id>` | Available | Show artifact metadata. Static-catalog entries currently return `artifact: null`. |
+| `corehub package versions <id>` | Available | Show publisher-owned version metadata. |
+| `corehub package files <id>` | Available | Show file metadata from the artifact manifest. |
+| `corehub package artifact <id>` | Available | Show artifact manifest metadata, checksum, provenance, and download policy. |
 | `corehub package download <id>` | Contract only | Probe the download endpoint. Hosted registry returns `501 not_implemented` until artifact storage lands. |
 | `corehub package publish <source>` | Planned | Publish package artifacts after registry writes land. |
 | `corehub registry info` | Available | Read the API discovery document. |

@@ -53,8 +53,8 @@ Real artifact downloads need provenance before binary storage is enabled:
 
 - A package must have an owner.
 - A version must be tied to that owner.
-- Artifact integrity must be recorded.
+- Artifact integrity must be recorded in a manifest.
 - Moderation and security review must decide whether downloads are allowed.
 - Ownership transfer must not silently change what existing installs trust.
 
-Until those checks exist, CoreHub exposes download endpoint contracts but returns `501 not_implemented` for binary downloads.
+CoreHub now exposes publisher-owned version and artifact manifest metadata. Binary downloads still return `501 not_implemented` until storage-backed artifacts and policy enforcement land.
