@@ -87,12 +87,12 @@ Single-entry endpoints return an object in `data`. List and search endpoints ret
       "publisher": {
         "handle": "coreblow"
       },
-      "status": "metadata-only",
+      "status": "available",
       "artifact": {
         "name": "plugin-lab-0.1.0.corehub-manifest.json",
         "mediaType": "application/vnd.coreblow.corehub.manifest+json",
-        "size": 0,
-        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 228,
+        "sha256": "6cff5dda1d4e54dff6c706947acdacf6cc3a4442d649424181bdde3bd2630373",
         "downloadEnabled": true,
         "storage": {
           "provider": "github-raw",
@@ -124,7 +124,7 @@ Single-entry endpoints return an object in `data`. List and search endpoints ret
 }
 ```
 
-## Examples
+## Endpoint Examples
 
 List every entry:
 
@@ -162,6 +162,40 @@ Inspect a publisher:
 curl https://coreblow.com/corehub/api/v1/publishers/coreblow
 ```
 
+List versions:
+
+```sh
+curl https://coreblow.com/corehub/api/v1/packages/plugin-lab/versions
+```
+
+The response includes publisher ownership, version status, artifact checksum, and storage metadata:
+
+```json
+{
+  "apiVersion": "v1",
+  "data": [
+    {
+      "id": "plugin-lab",
+      "version": "0.1.0",
+      "tag": "latest",
+      "publisher": {
+        "handle": "coreblow"
+      },
+      "status": "available",
+      "artifact": {
+        "name": "plugin-lab-0.1.0.corehub-manifest.json",
+        "size": 228,
+        "sha256": "6cff5dda1d4e54dff6c706947acdacf6cc3a4442d649424181bdde3bd2630373",
+        "downloadEnabled": true
+      }
+    }
+  ],
+  "meta": {
+    "count": 1
+  }
+}
+```
+
 Read file metadata:
 
 ```sh
@@ -174,6 +208,41 @@ Read artifact metadata:
 curl https://coreblow.com/corehub/api/v1/packages/plugin-lab/artifact
 ```
 
+The artifact response is the best endpoint for clients that need checksum and storage metadata before installing:
+
+```json
+{
+  "apiVersion": "v1",
+  "data": {
+    "package": {
+      "id": "plugin-lab",
+      "kind": "plugin",
+      "name": "Plugin Lab"
+    },
+    "version": "0.1.0",
+    "publisher": {
+      "handle": "coreblow"
+    },
+    "artifact": {
+      "name": "plugin-lab-0.1.0.corehub-manifest.json",
+      "size": 228,
+      "sha256": "6cff5dda1d4e54dff6c706947acdacf6cc3a4442d649424181bdde3bd2630373",
+      "downloadEnabled": true,
+      "storage": {
+        "provider": "github-raw",
+        "key": "artifacts/plugin-lab-0.1.0.corehub-manifest.json"
+      }
+    },
+    "download": {
+      "available": true
+    }
+  },
+  "meta": {
+    "count": 1
+  }
+}
+```
+
 Probe the download endpoint:
 
 ```sh
@@ -184,6 +253,48 @@ Inspect the signed download contract:
 
 ```sh
 curl "https://coreblow.com/corehub/api/v1/packages/plugin-lab/download?redirect=false"
+```
+
+The default download endpoint responds with `302` and these headers:
+
+| Header | Description |
+| --- | --- |
+| `Location` | Signed storage URL. |
+| `X-CoreHub-Package` | Package id. |
+| `X-CoreHub-Version` | Resolved version. |
+| `X-CoreHub-Artifact-Sha256` | Expected artifact checksum. |
+| `X-CoreHub-Download-Expires` | Redirect contract expiry timestamp. |
+| `X-CoreHub-Download-Signature` | Signature over package, version, checksum, storage key, and expiry. |
+
+`redirect=false` returns the same contract as JSON:
+
+```json
+{
+  "apiVersion": "v1",
+  "data": {
+    "package": {
+      "id": "plugin-lab",
+      "kind": "plugin",
+      "name": "Plugin Lab"
+    },
+    "version": "0.1.0",
+    "publisher": {
+      "handle": "coreblow"
+    },
+    "download": {
+      "available": true,
+      "redirect": true,
+      "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.corehub-manifest.json?corehub_expires=...",
+      "expires": 1779249959,
+      "signature": "..."
+    }
+  },
+  "meta": {
+    "count": 1,
+    "package": "plugin-lab",
+    "version": "0.1.0"
+  }
+}
 ```
 
 ## CLI Usage
@@ -223,6 +334,17 @@ COREHUB_REGISTRY=https://coreblow.com/corehub
 | Publish writes | Planned. Requires publisher identity and moderation. |
 | File metadata | Available in v1 from artifact manifests. |
 | Install counts | Planned. Requires safe aggregate analytics. |
+
+## Status and Error Matrix
+
+| Status | When it happens | Shape |
+| --- | --- | --- |
+| `200` | Catalog, search, inspect, publisher, versions, files, artifact, or `download?redirect=false` succeeds. | Standard JSON envelope. |
+| `302` | `/download` succeeds and redirects to artifact storage. | Empty response with `Location` and CoreHub download headers. |
+| `400` | A required query parameter is missing, such as `id` on `/download`. | JSON envelope with `validation_error`. |
+| `403` | The artifact exists but version status or download policy blocks download. | JSON envelope with `download_forbidden`. |
+| `404` | Package, publisher, version, or route is unknown. | JSON envelope with `not_found`. |
+| `501` | An artifact cannot be served because storage metadata is not available. | JSON envelope with `not_implemented`. |
 
 ## Error Responses
 

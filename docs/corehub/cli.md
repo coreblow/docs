@@ -20,6 +20,43 @@ npm run corehub -- skill publish fixtures/example-skill
 
 `skill publish` is currently a dry-run inspection flow. Remote publishing remains planned until publisher identity, moderation, and storage flows are ready.
 
+## Registry Workflow
+
+Use this workflow when you want to inspect a package the same way an install client should reason about it.
+
+1. Discover entries:
+
+```sh
+npm run corehub -- search plugin --registry https://coreblow.com/corehub
+```
+
+2. Inspect the package record:
+
+```sh
+npm run corehub -- package inspect plugin-lab --registry https://coreblow.com/corehub
+```
+
+3. Verify the publisher:
+
+```sh
+npm run corehub -- publishers inspect coreblow --registry https://coreblow.com/corehub
+```
+
+4. Inspect versions and artifact metadata:
+
+```sh
+npm run corehub -- package versions plugin-lab --registry https://coreblow.com/corehub
+npm run corehub -- package artifact plugin-lab --registry https://coreblow.com/corehub
+```
+
+5. Read signed download metadata:
+
+```sh
+npm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub
+```
+
+The CLI requests `redirect=false` from the Registry API. It prints the package, publisher, artifact checksum, storage URL, and signature metadata instead of following the redirect automatically.
+
 ## Package-Compatible Commands
 
 CoreHub keeps ClawHub-style package commands so clients can grow around stable registry habits:
@@ -56,6 +93,19 @@ Or configure:
 ```sh
 COREHUB_REGISTRY=https://coreblow.com/corehub
 ```
+
+## Download Verification
+
+Current CLI download output is metadata-first. Before an installer writes files, it should compare the fetched artifact with:
+
+| Field | Required check |
+| --- | --- |
+| `artifact.size` | Downloaded byte count must match. |
+| `artifact.sha256` | Downloaded content hash must match. |
+| `artifact.storage.key` | Storage path should match the signed redirect contract. |
+| `download.signature` | Signature should be tied to package, version, checksum, storage key, and expiry. |
+
+The next CLI implementation step is a verified `--output <path>` mode that follows the signed URL, writes the artifact, and fails closed on checksum or size mismatch.
 
 ## Command Map
 
