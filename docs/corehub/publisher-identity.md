@@ -1,6 +1,6 @@
 # CoreHub Publisher Identity
 
-Publisher identity is the ownership layer for CoreHub entries. It must exist before real artifact downloads, remote publishing, ownership transfer, or install analytics.
+Publisher identity is the ownership layer for CoreHub entries. It connects packages, versions, artifact manifests, signed downloads, and future publishing workflows to a stable owner.
 
 ## Publisher Shape
 
@@ -47,9 +47,9 @@ npm run corehub -- publishers list --registry https://coreblow.com/corehub
 npm run corehub -- publishers inspect coreblow --registry https://coreblow.com/corehub
 ```
 
-## Why This Blocks Downloads
+## Why This Matters
 
-Real artifact downloads need provenance before binary storage is enabled:
+Artifact downloads need provenance before clients install anything:
 
 - A package must have an owner.
 - A version must be tied to that owner.
@@ -57,4 +57,4 @@ Real artifact downloads need provenance before binary storage is enabled:
 - Moderation and security review must decide whether downloads are allowed.
 - Ownership transfer must not silently change what existing installs trust.
 
-CoreHub now exposes publisher-owned version and artifact manifest metadata. Binary downloads still return `501 not_implemented` until storage-backed artifacts and policy enforcement land.
+CoreHub now exposes publisher-owned versions, artifact manifests, and storage-backed signed downloads. For the full verification chain, see the [Trust Model](/corehub/trust-model).

@@ -58,3 +58,4 @@ Then run read commands without repeating `--registry`.
 
 - Read the [CLI reference](/corehub/cli).
 - Read the [Registry API reference](/corehub/api).
+- Read the [Trust Model](/corehub/trust-model).

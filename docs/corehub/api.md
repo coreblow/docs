@@ -362,3 +362,5 @@ Missing entries and unknown routes return the standard envelope with an error ob
   }
 }
 ```
+
+For the signed redirect workflow, see [Downloads](/corehub/downloads). For publisher, version, artifact, and client verification semantics, see [Trust Model](/corehub/trust-model).

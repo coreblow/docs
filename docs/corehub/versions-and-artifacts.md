@@ -16,12 +16,12 @@ Catalog entries can include explicit versions:
       "publisher": {
         "handle": "coreblow"
       },
-      "status": "metadata-only",
+      "status": "available",
       "artifact": {
         "name": "plugin-lab-0.1.0.corehub-manifest.json",
         "mediaType": "application/vnd.coreblow.corehub.manifest+json",
-        "size": 0,
-        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 228,
+        "sha256": "6cff5dda1d4e54dff6c706947acdacf6cc3a4442d649424181bdde3bd2630373",
         "downloadEnabled": true,
         "storage": {
           "provider": "github-raw",
@@ -43,7 +43,7 @@ Catalog entries can include explicit versions:
 
 | Status | Meaning |
 | --- | --- |
-| `metadata-only` | The version has publisher and artifact metadata, but binary download is not enabled. |
+| `metadata-only` | The version has publisher and artifact metadata, but signed download redirects are not enabled. |
 | `available` | The version can be served by a storage-backed download flow. |
 | `deprecated` | The version remains visible but should not be selected for new installs. |
 | `blocked` | The version is blocked by moderation or security policy. |
@@ -79,3 +79,5 @@ npm run corehub -- package files plugin-lab --registry https://coreblow.com/core
 ## Download Policy
 
 Publisher-owned versions make the trust chain explicit. Versions with `status: "available"`, `downloadEnabled: true`, and a storage locator can be served through the signed redirect endpoint.
+
+Next, read [Downloads](/corehub/downloads) for the signed redirect flow or [Trust Model](/corehub/trust-model) for the full verification chain.

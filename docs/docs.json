@@ -194,7 +194,7 @@
                     "page": "corehub/publisher-identity"
                   },
                   {
-                    "label": "Versions and Artifacts",
+                    "label": "Versions",
                     "page": "corehub/versions-and-artifacts"
                   },
                   {
@@ -211,7 +211,7 @@
                     "page": "corehub/trust-model"
                   },
                   {
-                    "label": "Publishing Roadmap",
+                    "label": "Publishing",
                     "page": "corehub/publishing-roadmap"
                   },
                   {

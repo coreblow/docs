@@ -64,3 +64,5 @@ npm run corehub -- package download plugin-lab --registry https://coreblow.com/c
 ```
 
 The CLI requests `redirect=false` and prints the signed download metadata instead of following the redirect automatically.
+
+For the security model behind this flow, see the [Trust Model](/corehub/trust-model). For endpoint details and status codes, see the [Registry API](/corehub/api).

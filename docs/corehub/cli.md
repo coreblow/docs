@@ -107,6 +107,8 @@ Current CLI download output is metadata-first. Before an installer writes files,
 
 The next CLI implementation step is a verified `--output <path>` mode that follows the signed URL, writes the artifact, and fails closed on checksum or size mismatch.
 
+For the signed redirect behavior behind this command, see [Downloads](/corehub/downloads). For the full trust chain, see [Trust Model](/corehub/trust-model).
+
 ## Command Map
 
 | Command | Status | Purpose |
