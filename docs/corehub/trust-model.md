@@ -60,8 +60,8 @@ The artifact `storage` block separates registry trust metadata from the physical
 {
   "storage": {
     "provider": "github-raw",
-    "key": "artifacts/plugin-lab-0.1.0.corehub-manifest.json",
-    "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.corehub-manifest.json"
+    "key": "artifacts/plugin-lab-0.1.0.coreblow-plugin.tgz",
+    "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.coreblow-plugin.tgz"
   }
 }
 ```

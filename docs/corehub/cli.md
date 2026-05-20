@@ -55,7 +55,7 @@ npm run corehub -- package artifact plugin-lab --registry https://coreblow.com/c
 
 ```sh
 npm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub
-npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+npm run corehub -- package download plugin-lab --output plugin-lab.coreblow-plugin.tgz --registry https://coreblow.com/corehub
 ```
 
 Without `--output`, the CLI requests `redirect=false` from the Registry API and prints the package, publisher, artifact checksum, storage URL, and signature metadata. With `--output`, it fetches the signed storage URL, verifies the downloaded byte count and SHA-256 checksum, and writes the artifact only after verification passes.
@@ -67,7 +67,7 @@ npm run corehub -- install plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- install plugin-lab --dry-run --registry https://coreblow.com/corehub
 ```
 
-`corehub install <id>` is the user-facing install entrypoint, matching OpenClaw's simple install shape. During the current transition, it resolves the package and publisher, but the apply step is blocked until CoreHub versions publish installable CoreBlow plugin archives. Use `--dry-run` to preview the install plan.
+`corehub install <id>` is the user-facing install entrypoint, matching OpenClaw's simple install shape. It resolves the package and publisher, fetches and verifies the installable CoreBlow plugin archive, then stops at the CoreBlow installer boundary until that handoff is wired. Use `--dry-run` to preview the install plan without fetching bytes.
 
 ## Package-Compatible Commands
 
@@ -81,10 +81,10 @@ npm run corehub -- package versions plugin-lab
 npm run corehub -- package files plugin-lab
 npm run corehub -- package artifact plugin-lab
 npm run corehub -- package download plugin-lab
-npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json
+npm run corehub -- package download plugin-lab --output plugin-lab.coreblow-plugin.tgz
 npm run corehub -- package install plugin-lab
 npm run corehub -- package install plugin-lab --dry-run
-npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json
+npm run corehub -- package install plugin-lab --output plugin-lab.coreblow-plugin.tgz
 ```
 
 ## Hosted Registry Reads
@@ -103,9 +103,9 @@ npm run corehub -- package versions plugin-lab --registry https://coreblow.com/c
 npm run corehub -- package files plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package artifact plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub
-npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+npm run corehub -- package download plugin-lab --output plugin-lab.coreblow-plugin.tgz --registry https://coreblow.com/corehub
 npm run corehub -- package install plugin-lab --registry https://coreblow.com/corehub
-npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+npm run corehub -- package install plugin-lab --output plugin-lab.coreblow-plugin.tgz --registry https://coreblow.com/corehub
 npm run corehub -- registry info --registry https://coreblow.com/corehub
 ```
 
@@ -129,7 +129,7 @@ CoreHub CLI downloads are metadata-first unless an output path is provided. Befo
 Use `--output <path>` to perform the verified fetch:
 
 ```sh
-npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+npm run corehub -- package download plugin-lab --output plugin-lab.coreblow-plugin.tgz --registry https://coreblow.com/corehub
 ```
 
 If the byte count or SHA-256 checksum does not match the artifact manifest, the command fails before writing the output file.
@@ -150,10 +150,10 @@ For the signed redirect behavior behind this command, see [Downloads](/corehub/d
 Use `--output <path>` when you want the planner to prove the artifact bytes:
 
 ```sh
-npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+npm run corehub -- package install plugin-lab --output plugin-lab.coreblow-plugin.tgz --registry https://coreblow.com/corehub
 ```
 
-The command remains dry-run after writing the verified artifact; it does not install the plugin into CoreBlow yet.
+The technical command remains a planner after writing the verified artifact; it does not install the plugin into CoreBlow yet.
 
 The user-facing command is shorter:
 
@@ -161,7 +161,7 @@ The user-facing command is shorter:
 npm run corehub -- install plugin-lab --registry https://coreblow.com/corehub
 ```
 
-That command follows the OpenClaw UX direction. It attempts the install flow by default and reports a blocked apply step until installable CoreBlow plugin archives are available.
+That command follows the OpenClaw UX direction. It attempts the install flow by default, verifies the plugin archive, and reports a blocked apply step until the CoreBlow plugin installer boundary is connected.
 
 ## Command Map
 

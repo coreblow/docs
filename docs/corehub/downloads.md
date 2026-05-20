@@ -20,8 +20,8 @@ Artifact manifests can include a storage locator:
 {
   "storage": {
     "provider": "github-raw",
-    "key": "artifacts/plugin-lab-0.1.0.corehub-manifest.json",
-    "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.corehub-manifest.json"
+    "key": "artifacts/plugin-lab-0.1.0.coreblow-plugin.tgz",
+    "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.coreblow-plugin.tgz"
   }
 }
 ```
@@ -61,13 +61,13 @@ The JSON response includes:
 
 ```sh
 npm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub
-npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+npm run corehub -- package download plugin-lab --output plugin-lab.coreblow-plugin.tgz --registry https://coreblow.com/corehub
 npm run corehub -- install plugin-lab --dry-run --registry https://coreblow.com/corehub
-npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+npm run corehub -- package install plugin-lab --output plugin-lab.coreblow-plugin.tgz --registry https://coreblow.com/corehub
 ```
 
 Without `--output`, the CLI requests `redirect=false` and prints the signed download metadata. With `--output`, it fetches the signed storage URL, verifies `artifact.size` and `artifact.sha256`, then writes the artifact to disk.
 
-`corehub install` is the OpenClaw-style user command. It uses `--dry-run` for preview; apply is currently blocked until CoreHub publishes installable CoreBlow plugin archives. `package install` remains the technical command and uses the same verified download path when `--output` is present.
+`corehub install` is the OpenClaw-style user command. It uses `--dry-run` for preview; apply now fetches and verifies the CoreBlow plugin archive, then stops at the installer boundary until CoreBlow install handoff is wired. `package install` remains the technical command and uses the same verified download path when `--output` is present.
 
 For the security model behind this flow, see the [Trust Model](/corehub/trust-model). For endpoint details and status codes, see the [Registry API](/corehub/api).

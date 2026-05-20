@@ -89,21 +89,37 @@ Single-entry endpoints return an object in `data`. List and search endpoints ret
       },
       "status": "available",
       "artifact": {
-        "name": "plugin-lab-0.1.0.corehub-manifest.json",
-        "mediaType": "application/vnd.coreblow.corehub.manifest+json",
-        "size": 228,
-        "sha256": "6cff5dda1d4e54dff6c706947acdacf6cc3a4442d649424181bdde3bd2630373",
+        "name": "plugin-lab-0.1.0.coreblow-plugin.tgz",
+        "mediaType": "application/vnd.coreblow.plugin-archive+gzip",
+        "size": 363,
+        "sha256": "43dbdab7bcf34e243b12072edd89cab97965104193c169114d8754c447d5beab",
         "downloadEnabled": true,
         "storage": {
           "provider": "github-raw",
-          "key": "artifacts/plugin-lab-0.1.0.corehub-manifest.json",
-          "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.corehub-manifest.json"
+          "key": "artifacts/plugin-lab-0.1.0.coreblow-plugin.tgz",
+          "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.coreblow-plugin.tgz"
         },
         "provenance": {
           "source": "https://github.com/coreblow/plugin-lab",
           "reviewState": "verified"
         },
-        "files": []
+        "files": [
+          {
+            "path": "coreblow.plugin.json",
+            "size": 147,
+            "sha256": "8b238efe0bb0963196eeb08dda670272614a04f55b541642f8d2043c353ebefc"
+          },
+          {
+            "path": "index.js",
+            "size": 78,
+            "sha256": "c8c32710010c476a058bd11d43e81c773f6a96700684c3abccaba82cdcdb369d"
+          },
+          {
+            "path": "README.md",
+            "size": 101,
+            "sha256": "6b4a496fecadafe2fedbb327fe0f1ab955ab40bacb311af7339e0bebb8314243"
+          }
+        ]
       }
     }
   ],
@@ -183,9 +199,9 @@ The response includes publisher ownership, version status, artifact checksum, an
       },
       "status": "available",
       "artifact": {
-        "name": "plugin-lab-0.1.0.corehub-manifest.json",
-        "size": 228,
-        "sha256": "6cff5dda1d4e54dff6c706947acdacf6cc3a4442d649424181bdde3bd2630373",
+        "name": "plugin-lab-0.1.0.coreblow-plugin.tgz",
+        "size": 363,
+        "sha256": "43dbdab7bcf34e243b12072edd89cab97965104193c169114d8754c447d5beab",
         "downloadEnabled": true
       }
     }
@@ -224,13 +240,13 @@ The artifact response is the best endpoint for clients that need checksum and st
       "handle": "coreblow"
     },
     "artifact": {
-      "name": "plugin-lab-0.1.0.corehub-manifest.json",
-      "size": 228,
-      "sha256": "6cff5dda1d4e54dff6c706947acdacf6cc3a4442d649424181bdde3bd2630373",
+      "name": "plugin-lab-0.1.0.coreblow-plugin.tgz",
+      "size": 363,
+      "sha256": "43dbdab7bcf34e243b12072edd89cab97965104193c169114d8754c447d5beab",
       "downloadEnabled": true,
       "storage": {
         "provider": "github-raw",
-        "key": "artifacts/plugin-lab-0.1.0.corehub-manifest.json"
+        "key": "artifacts/plugin-lab-0.1.0.coreblow-plugin.tgz"
       }
     },
     "download": {
@@ -284,7 +300,7 @@ The default download endpoint responds with `302` and these headers:
     "download": {
       "available": true,
       "redirect": true,
-      "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.corehub-manifest.json?corehub_expires=...",
+      "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.coreblow-plugin.tgz?corehub_expires=...",
       "expires": 1779249959,
       "signature": "..."
     }
