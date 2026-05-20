@@ -12,6 +12,8 @@ npm run corehub -- explore
 npm run corehub -- list
 npm run corehub -- list --kind skill
 npm run corehub -- search plugin
+npm run corehub -- install plugin-lab
+npm run corehub -- install plugin-lab --dry-run
 npm run corehub -- publishers list
 npm run corehub -- publishers inspect coreblow
 npm run corehub -- inspect fixtures/example-skill
@@ -58,14 +60,14 @@ npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manif
 
 Without `--output`, the CLI requests `redirect=false` from the Registry API and prints the package, publisher, artifact checksum, storage URL, and signature metadata. With `--output`, it fetches the signed storage URL, verifies the downloaded byte count and SHA-256 checksum, and writes the artifact only after verification passes.
 
-6. Produce a dry-run installer plan:
+6. Use the OpenClaw-style install command:
 
 ```sh
-npm run corehub -- package install plugin-lab --registry https://coreblow.com/corehub
-npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+npm run corehub -- install plugin-lab --registry https://coreblow.com/corehub
+npm run corehub -- install plugin-lab --dry-run --registry https://coreblow.com/corehub
 ```
 
-`package install` does not modify CoreBlow plugin state yet. It resolves the package, checks publisher and artifact metadata, and reports the install steps that would run. With `--output`, it also performs the verified artifact download and includes the verification result in the plan.
+`corehub install <id>` is the user-facing install entrypoint, matching OpenClaw's simple install shape. During the current transition, it resolves the package and publisher, but the apply step is blocked until CoreHub versions publish installable CoreBlow plugin archives. Use `--dry-run` to preview the install plan.
 
 ## Package-Compatible Commands
 
@@ -81,6 +83,7 @@ npm run corehub -- package artifact plugin-lab
 npm run corehub -- package download plugin-lab
 npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json
 npm run corehub -- package install plugin-lab
+npm run corehub -- package install plugin-lab --dry-run
 npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json
 ```
 
@@ -91,6 +94,8 @@ Pass `--registry` to read from production:
 ```sh
 npm run corehub -- explore --registry https://coreblow.com/corehub
 npm run corehub -- search plugin --registry https://coreblow.com/corehub
+npm run corehub -- install plugin-lab --registry https://coreblow.com/corehub
+npm run corehub -- install plugin-lab --dry-run --registry https://coreblow.com/corehub
 npm run corehub -- publishers list --registry https://coreblow.com/corehub
 npm run corehub -- publishers inspect coreblow --registry https://coreblow.com/corehub
 npm run corehub -- package inspect plugin-lab --registry https://coreblow.com/corehub
@@ -137,7 +142,7 @@ For the signed redirect behavior behind this command, see [Downloads](/corehub/d
 
 | Field | Purpose |
 | --- | --- |
-| `dryRun` | Always `true` until CoreBlow plugin install wiring lands. |
+| `dryRun` | `true` only when `--dry-run` is provided. |
 | `install.status` | Planned install action and whether CoreBlow state would be modified. |
 | `download.verified` | Whether the artifact was fetched and checksum verified. |
 | `plan` | Ordered install steps for package resolution, publisher verification, artifact fetch, and plugin install. |
@@ -150,6 +155,14 @@ npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manife
 
 The command remains dry-run after writing the verified artifact; it does not install the plugin into CoreBlow yet.
 
+The user-facing command is shorter:
+
+```sh
+npm run corehub -- install plugin-lab --registry https://coreblow.com/corehub
+```
+
+That command follows the OpenClaw UX direction. It attempts the install flow by default and reports a blocked apply step until installable CoreBlow plugin archives are available.
+
 ## Command Map
 
 | Command | Status | Purpose |
@@ -158,6 +171,7 @@ The command remains dry-run after writing the verified artifact; it does not ins
 | `corehub explore` | Available | List catalog entries. |
 | `corehub list` | Available | List entries, optionally filtered by `kind`. |
 | `corehub search <query>` | Available | Search local or hosted entries. |
+| `corehub install <id>` | Available | Start the user-facing install flow, with `--dry-run` for preview. |
 | `corehub publishers list` | Available | List publishers represented in the catalog. |
 | `corehub publishers inspect <handle>` | Available | Inspect one publisher and its catalog entries. |
 | `corehub inspect <target>` | Available | Inspect a catalog id or local skill folder. |
@@ -168,6 +182,6 @@ The command remains dry-run after writing the verified artifact; it does not ins
 | `corehub package files <id>` | Available | Show file metadata from the artifact manifest. |
 | `corehub package artifact <id>` | Available | Show artifact manifest metadata, checksum, provenance, and download policy. |
 | `corehub package download <id>` | Available | Print signed download metadata or write a verified artifact with `--output`. |
-| `corehub package install <id>` | Available | Produce a dry-run install plan, optionally with a verified artifact download. |
+| `corehub package install <id>` | Available | Produce a technical install plan, optionally with a verified artifact download and `--dry-run` preview. |
 | `corehub package publish <source>` | Planned | Publish package artifacts after registry writes land. |
 | `corehub registry info` | Available | Read the API discovery document. |

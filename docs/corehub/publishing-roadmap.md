@@ -13,6 +13,7 @@ CoreHub publishing is planned as a controlled registry workflow. The current reg
 | Artifact manifests | Live now |
 | Storage-backed signed downloads | Live now |
 | Dry-run install planning | Live now |
+| OpenClaw-style install command | Live now, apply blocked until installable plugin archives land |
 | Remote publish writes | Planned |
 | Artifact upload API | Planned |
 | Review and moderation queue | Planned |
@@ -131,12 +132,15 @@ The recommended implementation order is:
 
 1. Verified CLI download with checksum and size enforcement. Done.
 2. Dry-run install planning that wires verified downloads into install intent. Done.
-3. Publisher registration model.
-4. Package submission draft API.
-5. Artifact upload and storage policy.
-6. Review and moderation queue.
-7. Publish approval flow.
-8. Ownership transfer workflow.
-9. Aggregate install analytics.
+3. OpenClaw-style `corehub install <id>` command with `--dry-run` preview. Done.
+4. Installable CoreBlow plugin archive artifacts.
+5. CoreBlow plugin installer boundary.
+6. Publisher registration model.
+7. Package submission draft API.
+8. Artifact upload and storage policy.
+9. Review and moderation queue.
+10. Publish approval flow.
+11. Ownership transfer workflow.
+12. Aggregate install analytics.
 
 This keeps the CoreHub trust chain intact while moving from read-only registry data toward controlled publisher writes.
