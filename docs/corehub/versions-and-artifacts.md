@@ -1,6 +1,6 @@
 # CoreHub Versions and Artifacts
 
-CoreHub versions tie a package release to a publisher before binary downloads are enabled.
+CoreHub versions tie a package release to a publisher before install clients fetch artifact storage.
 
 ## Version Shape
 
@@ -22,7 +22,12 @@ Catalog entries can include explicit versions:
         "mediaType": "application/vnd.coreblow.corehub.manifest+json",
         "size": 0,
         "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "downloadEnabled": false,
+        "downloadEnabled": true,
+        "storage": {
+          "provider": "github-raw",
+          "key": "artifacts/plugin-lab-0.1.0.corehub-manifest.json",
+          "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.corehub-manifest.json"
+        },
         "provenance": {
           "source": "https://github.com/coreblow/plugin-lab",
           "reviewState": "verified"
@@ -73,4 +78,4 @@ npm run corehub -- package files plugin-lab --registry https://coreblow.com/core
 
 ## Download Policy
 
-Publisher-owned versions make the trust chain explicit, but `downloadEnabled` stays `false` until CoreHub has storage-backed artifacts, checksum enforcement, and policy checks. The download endpoint remains available as a contract probe and returns `501 not_implemented`.
+Publisher-owned versions make the trust chain explicit. Versions with `status: "available"`, `downloadEnabled: true`, and a storage locator can be served through the signed redirect endpoint.

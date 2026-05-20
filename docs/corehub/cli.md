@@ -74,6 +74,6 @@ COREHUB_REGISTRY=https://coreblow.com/corehub
 | `corehub package versions <id>` | Available | Show publisher-owned version metadata. |
 | `corehub package files <id>` | Available | Show file metadata from the artifact manifest. |
 | `corehub package artifact <id>` | Available | Show artifact manifest metadata, checksum, provenance, and download policy. |
-| `corehub package download <id>` | Contract only | Probe the download endpoint. Hosted registry returns `501 not_implemented` until artifact storage lands. |
+| `corehub package download <id>` | Available | Print signed download metadata for storage-backed artifacts. |
 | `corehub package publish <source>` | Planned | Publish package artifacts after registry writes land. |
 | `corehub registry info` | Available | Read the API discovery document. |

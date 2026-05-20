@@ -34,8 +34,9 @@ The current CoreHub release is the registry foundation:
 - Package-compatible aliases for ClawHub-style command habits.
 - Publisher identity records for catalog ownership.
 - Publisher-owned version and artifact manifest metadata.
+- Storage-backed signed download redirects.
 
-Write-side publishing, storage-backed file downloads, moderation, and install analytics are planned follow-up surfaces.
+Write-side publishing, moderation workflows, and install analytics are planned follow-up surfaces.
 
 ## Learn More
 
@@ -43,4 +44,5 @@ Write-side publishing, storage-backed file downloads, moderation, and install an
 - [CLI](/corehub/cli)
 - [Publisher Identity](/corehub/publisher-identity)
 - [Versions and Artifacts](/corehub/versions-and-artifacts)
+- [Downloads](/corehub/downloads)
 - [Registry API](/corehub/api)

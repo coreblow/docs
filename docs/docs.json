@@ -196,6 +196,10 @@
                   {
                     "label": "Versions and Artifacts",
                     "page": "corehub/versions-and-artifacts"
+                  },
+                  {
+                    "label": "Downloads",
+                    "page": "corehub/downloads"
                   }
                 ]
               },
@@ -365,6 +369,7 @@
     "docs/corehub/cli.md",
     "docs/corehub/publisher-identity.md",
     "docs/corehub/versions-and-artifacts.md",
+    "docs/corehub/downloads.md",
     "docs/corehub/api.md",
     "docs/gateway/index.md",
     "docs/gateway/api.md",

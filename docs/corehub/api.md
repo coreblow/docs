@@ -8,7 +8,7 @@ Base URL:
 https://coreblow.com/corehub/api/v1
 ```
 
-The API is backed by the static CoreHub catalog today. It is intentionally read-only while storage-backed downloads, moderation, and write-side registry flows are planned.
+The API is backed by the static CoreHub catalog today. It is intentionally read-only while moderation and write-side registry flows are planned.
 
 ## Endpoints
 
@@ -27,8 +27,8 @@ The API is backed by the static CoreHub catalog today. It is intentionally read-
 | `GET` | `/corehub/api/v1/packages/:id/versions` | Return publisher-owned package versions. |
 | `GET` | `/corehub/api/v1/packages/:id/files` | Return file metadata from the artifact manifest. |
 | `GET` | `/corehub/api/v1/packages/:id/artifact` | Return artifact manifest metadata for a package version. |
-| `GET` | `/corehub/api/v1/packages/:id/download` | Download a package artifact. Currently returns `501 not_implemented`. |
-| `GET` | `/corehub/api/v1/download?id=<id>` | Top-level download alias. Currently returns `501 not_implemented`. |
+| `GET` | `/corehub/api/v1/packages/:id/download` | Signed redirect to package artifact storage. Use `redirect=false` for JSON metadata. |
+| `GET` | `/corehub/api/v1/download?id=<id>` | Top-level signed download alias. Use `redirect=false` for JSON metadata. |
 
 ## Query Parameters
 
@@ -41,6 +41,7 @@ The API is backed by the static CoreHub catalog today. It is intentionally read-
 | `version` | `/packages/:id/files`, `/packages/:id/artifact`, `/packages/:id/download`, `/download` | Selects a package version. Defaults to the current static version. |
 | `tag` | `/packages/:id/files`, `/packages/:id/artifact`, `/packages/:id/download`, `/download` | `latest` resolves to the current static version. |
 | `id` | `/download` | Package id for the top-level download alias. |
+| `redirect` | `/packages/:id/download`, `/download` | Set to `false` to receive signed download metadata as JSON instead of a `302` redirect. |
 
 ## Response Envelope
 
@@ -92,7 +93,12 @@ Single-entry endpoints return an object in `data`. List and search endpoints ret
         "mediaType": "application/vnd.coreblow.corehub.manifest+json",
         "size": 0,
         "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "downloadEnabled": false,
+        "downloadEnabled": true,
+        "storage": {
+          "provider": "github-raw",
+          "key": "artifacts/plugin-lab-0.1.0.corehub-manifest.json",
+          "url": "https://raw.githubusercontent.com/coreblow/corehub/main/artifacts/plugin-lab-0.1.0.corehub-manifest.json"
+        },
         "provenance": {
           "source": "https://github.com/coreblow/plugin-lab",
           "reviewState": "verified"
@@ -171,7 +177,13 @@ curl https://coreblow.com/corehub/api/v1/packages/plugin-lab/artifact
 Probe the download endpoint:
 
 ```sh
-curl https://coreblow.com/corehub/api/v1/packages/plugin-lab/download
+curl -L https://coreblow.com/corehub/api/v1/packages/plugin-lab/download
+```
+
+Inspect the signed download contract:
+
+```sh
+curl "https://coreblow.com/corehub/api/v1/packages/plugin-lab/download?redirect=false"
 ```
 
 ## CLI Usage
@@ -207,9 +219,9 @@ COREHUB_REGISTRY=https://coreblow.com/corehub
 | Publisher identity | Available in v1 as catalog-backed publisher records. |
 | Version metadata | Available in v1 as publisher-owned version records. |
 | Artifact manifest | Available in v1 with checksum, provenance, files, and download policy. |
+| Signed downloads | Available in v1 through storage-backed redirects. |
 | Publish writes | Planned. Requires publisher identity and moderation. |
 | File metadata | Available in v1 from artifact manifests. |
-| File downloads | Endpoint available in v1 as `501 not_implemented`. Requires storage-backed artifacts and policy enforcement. |
 | Install counts | Planned. Requires safe aggregate analytics. |
 
 ## Error Responses
