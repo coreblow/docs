@@ -207,6 +207,10 @@
                 "group": "API and trust",
                 "pages": [
                   {
+                    "label": "Trust Model",
+                    "page": "corehub/trust-model"
+                  },
+                  {
                     "label": "Registry API",
                     "page": "corehub/api"
                   }
@@ -370,6 +374,7 @@
     "docs/corehub/publisher-identity.md",
     "docs/corehub/versions-and-artifacts.md",
     "docs/corehub/downloads.md",
+    "docs/corehub/trust-model.md",
     "docs/corehub/api.md",
     "docs/gateway/index.md",
     "docs/gateway/api.md",
