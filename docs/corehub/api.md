@@ -91,8 +91,8 @@ Single-entry endpoints return an object in `data`. List and search endpoints ret
       "artifact": {
         "name": "plugin-lab-0.1.0.coreblow-plugin.tgz",
         "mediaType": "application/vnd.coreblow.plugin-archive+gzip",
-        "size": 363,
-        "sha256": "43dbdab7bcf34e243b12072edd89cab97965104193c169114d8754c447d5beab",
+        "size": 433,
+        "sha256": "d4cdd76bd21b2c6217f5738a0ca50f9a60bedd84e1a779ca360e63260fc3299b",
         "downloadEnabled": true,
         "storage": {
           "provider": "github-raw",
@@ -113,6 +113,11 @@ Single-entry endpoints return an object in `data`. List and search endpoints ret
             "path": "index.js",
             "size": 78,
             "sha256": "c8c32710010c476a058bd11d43e81c773f6a96700684c3abccaba82cdcdb369d"
+          },
+          {
+            "path": "package.json",
+            "size": 135,
+            "sha256": "4d3cfb38ee00d15fa9f23cf0fc9bb72afd258c9c2b371c9d05a342f391eb9079"
           },
           {
             "path": "README.md",
@@ -200,8 +205,8 @@ The response includes publisher ownership, version status, artifact checksum, an
       "status": "available",
       "artifact": {
         "name": "plugin-lab-0.1.0.coreblow-plugin.tgz",
-        "size": 363,
-        "sha256": "43dbdab7bcf34e243b12072edd89cab97965104193c169114d8754c447d5beab",
+        "size": 433,
+        "sha256": "d4cdd76bd21b2c6217f5738a0ca50f9a60bedd84e1a779ca360e63260fc3299b",
         "downloadEnabled": true
       }
     }
@@ -241,8 +246,8 @@ The artifact response is the best endpoint for clients that need checksum and st
     },
     "artifact": {
       "name": "plugin-lab-0.1.0.coreblow-plugin.tgz",
-      "size": 363,
-      "sha256": "43dbdab7bcf34e243b12072edd89cab97965104193c169114d8754c447d5beab",
+      "size": 433,
+      "sha256": "d4cdd76bd21b2c6217f5738a0ca50f9a60bedd84e1a779ca360e63260fc3299b",
       "downloadEnabled": true,
       "storage": {
         "provider": "github-raw",
