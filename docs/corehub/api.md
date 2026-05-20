@@ -21,6 +21,8 @@ The API is backed by the static CoreHub catalog today. It is intentionally read-
 | `GET` | `/corehub/api/v1/search?q=<query>` | Search entries by id, kind, name, summary, tags, capabilities, platforms, and review state. Supports `kind` and `limit`. |
 | `GET` | `/corehub/api/v1/packages` | Package-compatible list alias over the catalog. Supports `kind` and `family=skill`. |
 | `GET` | `/corehub/api/v1/packages/search?q=<query>` | Package-compatible search alias. Supports `kind` and `limit`. |
+| `GET` | `/corehub/api/v1/publishers` | List publishers represented in the catalog. |
+| `GET` | `/corehub/api/v1/publishers/:handle` | Inspect one publisher and its catalog entries. |
 | `GET` | `/corehub/api/v1/packages/:id` | Inspect one package-compatible entry. |
 | `GET` | `/corehub/api/v1/packages/:id/versions` | Return the current static version as `latest`. |
 | `GET` | `/corehub/api/v1/packages/:id/files` | Return file metadata for a package version. Currently empty until artifact storage lands. |
@@ -69,6 +71,13 @@ Single-entry endpoints return an object in `data`. List and search endpoints ret
   "version": "0.1.0",
   "tags": ["testing", "compatibility", "plugins"],
   "capabilities": ["plugin fixtures", "compatibility checks", "contract validation"],
+  "publisher": {
+    "handle": "coreblow",
+    "displayName": "CoreBlow",
+    "url": "https://github.com/coreblow",
+    "verified": true,
+    "contact": "https://github.com/coreblow/plugin-lab/security/policy"
+  },
   "review": {
     "state": "verified",
     "checkedAt": "2026-05-19",
@@ -112,6 +121,18 @@ Inspect one package-compatible entry:
 curl https://coreblow.com/corehub/api/v1/packages/plugin-lab
 ```
 
+List publishers:
+
+```sh
+curl https://coreblow.com/corehub/api/v1/publishers
+```
+
+Inspect a publisher:
+
+```sh
+curl https://coreblow.com/corehub/api/v1/publishers/coreblow
+```
+
 Read file metadata:
 
 ```sh
@@ -137,6 +158,8 @@ CoreHub CLI read commands can use the hosted registry with `--registry`:
 ```sh
 npm run corehub -- explore --registry https://coreblow.com/corehub
 npm run corehub -- search plugin --registry https://coreblow.com/corehub
+npm run corehub -- publishers list --registry https://coreblow.com/corehub
+npm run corehub -- publishers inspect coreblow --registry https://coreblow.com/corehub
 npm run corehub -- package inspect plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package versions plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package files plugin-lab --registry https://coreblow.com/corehub
@@ -158,6 +181,7 @@ COREHUB_REGISTRY=https://coreblow.com/corehub
 | Read catalog | Available in v1. |
 | Search | Available in v1 with deterministic static-catalog scoring. |
 | Package aliases | Available in v1 for CLI and ClawHub-style command compatibility. |
+| Publisher identity | Available in v1 as catalog-backed publisher records. |
 | Publish writes | Planned. Requires publisher identity and moderation. |
 | File metadata | Available in v1 with empty static-catalog results until artifact storage lands. |
 | Artifact metadata | Available in v1 with `artifact: null` until artifact storage lands. |

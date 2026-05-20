@@ -188,6 +188,10 @@
                   {
                     "label": "CLI",
                     "page": "corehub/cli"
+                  },
+                  {
+                    "label": "Publisher Identity",
+                    "page": "corehub/publisher-identity"
                   }
                 ]
               },
@@ -355,6 +359,7 @@
     "docs/corehub/index.md",
     "docs/corehub/quickstart.md",
     "docs/corehub/cli.md",
+    "docs/corehub/publisher-identity.md",
     "docs/corehub/api.md",
     "docs/gateway/index.md",
     "docs/gateway/api.md",

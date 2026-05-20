@@ -12,6 +12,8 @@ npm run corehub -- explore
 npm run corehub -- list
 npm run corehub -- list --kind skill
 npm run corehub -- search plugin
+npm run corehub -- publishers list
+npm run corehub -- publishers inspect coreblow
 npm run corehub -- inspect fixtures/example-skill
 npm run corehub -- skill publish fixtures/example-skill
 ```
@@ -39,6 +41,8 @@ Pass `--registry` to read from production:
 ```sh
 npm run corehub -- explore --registry https://coreblow.com/corehub
 npm run corehub -- search plugin --registry https://coreblow.com/corehub
+npm run corehub -- publishers list --registry https://coreblow.com/corehub
+npm run corehub -- publishers inspect coreblow --registry https://coreblow.com/corehub
 npm run corehub -- package inspect plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package versions plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package files plugin-lab --registry https://coreblow.com/corehub
@@ -61,6 +65,8 @@ COREHUB_REGISTRY=https://coreblow.com/corehub
 | `corehub explore` | Available | List catalog entries. |
 | `corehub list` | Available | List entries, optionally filtered by `kind`. |
 | `corehub search <query>` | Available | Search local or hosted entries. |
+| `corehub publishers list` | Available | List publishers represented in the catalog. |
+| `corehub publishers inspect <handle>` | Available | Inspect one publisher and its catalog entries. |
 | `corehub inspect <target>` | Available | Inspect a catalog id or local skill folder. |
 | `corehub package explore` | Available | Package-compatible list command. |
 | `corehub package search <query>` | Available | Package-compatible search command. |

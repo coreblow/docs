@@ -32,11 +32,13 @@ The current CoreHub release is the registry foundation:
 - Read-only Registry API v1.
 - CLI reads through `--registry`.
 - Package-compatible aliases for ClawHub-style command habits.
+- Publisher identity records for catalog ownership.
 
-Write-side publishing, publisher identity, version storage, moderation, file downloads, and install analytics are planned follow-up surfaces.
+Write-side publishing, version storage, moderation, file downloads, and install analytics are planned follow-up surfaces.
 
 ## Learn More
 
 - [Quickstart](/corehub/quickstart)
 - [CLI](/corehub/cli)
+- [Publisher Identity](/corehub/publisher-identity)
 - [Registry API](/corehub/api)
