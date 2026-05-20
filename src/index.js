@@ -2,6 +2,47 @@ import { DOCS } from "./docs.generated.js";
 
 const docsByRoute = new Map(DOCS.map((doc) => [doc.route, doc]));
 const sections = [...new Set(DOCS.map((doc) => doc.section))].sort((a, b) => a.localeCompare(b));
+const topNav = [
+  { label: "Get started", route: "/start/quickstart" },
+  { label: "Install", route: "/install" },
+  { label: "CLI", route: "/cli" },
+  { label: "Channels", route: "/channels" },
+  { label: "Plugins", route: "/plugins" },
+  { label: "Gateway & Ops", route: "/gateway" },
+  { label: "Reference", route: "/reference" },
+  { label: "Help", route: "/help" },
+];
+const navGroups = [
+  {
+    title: "Overview",
+    routes: ["/", "/architecture", "/configuration", "/security-model", "/telemetry"],
+  },
+  {
+    title: "First steps",
+    routes: ["/start/quickstart", "/install", "/install/docker", "/install/linux", "/install/macos", "/install/windows"],
+  },
+  {
+    title: "CLI",
+    routes: ["/cli", "/cli/commands", "/cli/setup", "/cli/configure", "/cli/doctor", "/cli/plugins", "/cli/channels"],
+  },
+  {
+    title: "Channels",
+    routes: ["/channels", "/channels/discord", "/channels/slack", "/channels/telegram", "/channels/whatsapp", "/channels/signal"],
+  },
+  {
+    title: "Build",
+    routes: ["/plugins", "/plugins/sdk", "/tools", "/providers", "/gateway", "/gateway/api"],
+  },
+  {
+    title: "Reference",
+    routes: ["/reference/cli-reference", "/reference/config-reference", "/reference/plugin-api", "/reference/provider-api", "/api-reference"],
+  },
+  {
+    title: "Help",
+    routes: ["/help/troubleshooting", "/help/faq", "/help/common-errors", "/debug/overview-debug", "/support-channels"],
+  },
+];
+const searchIndex = DOCS.map(({ content, ...doc }) => doc);
 
 export default {
   async fetch(request) {
@@ -30,7 +71,11 @@ export default {
 
     const doc = docsByRoute.get(route);
     if (doc) {
-      return html(renderShell(renderDocument(doc), { title: doc.title, route: doc.route }));
+      return html(renderShell(renderDocument(doc), {
+        title: doc.title,
+        route: doc.route,
+        toc: extractHeadings(doc.content).slice(0, 12),
+      }));
     }
 
     return html(renderShell(renderNotFound(route), { title: "Not Found" }), { status: 404 });
@@ -45,9 +90,11 @@ function normalizeRoute(pathname) {
 
 function renderShell(content, options = {}) {
   const title = options.title ? `${options.title} | CoreBlow Docs` : "CoreBlow Docs";
-  const nav = sections
-    .map((section) => `<a href="/${escapeAttr(section)}">${escapeHtml(label(section))}</a>`)
+  const topLinks = topNav
+    .map((item) => `<a class="${isActiveRoute(options.route, item.route) ? "active" : ""}" href="${escapeAttr(item.route)}">${escapeHtml(item.label)}</a>`)
     .join("");
+  const sidebar = renderSidebar(options.route ?? "/");
+  const toc = renderToc(options.toc ?? []);
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,32 +105,34 @@ function renderShell(content, options = {}) {
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     :root {
-      --bg: #f8fafc;
+      --bg: #f7f8fb;
       --surface: #ffffff;
-      --surface-2: #eef2f7;
+      --surface-2: #f1f5f9;
+      --surface-3: #e8edf5;
       --text: #111827;
       --muted: #5b6472;
       --line: #d9e0ea;
       --accent: #0f766e;
       --accent-2: #1d4ed8;
       --code: #0f172a;
+      --shadow: 0 18px 54px rgba(15, 23, 42, 0.08);
     }
     body {
       margin: 0;
       min-height: 100vh;
-      background: var(--bg);
+      background: linear-gradient(180deg, #ffffff 0, var(--bg) 360px);
       color: var(--text);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
     }
     a { color: inherit; }
-    .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    .shell { width: min(1440px, calc(100% - 40px)); margin: 0 auto; }
     .topbar {
       display: flex;
       justify-content: space-between;
       gap: 18px;
       align-items: center;
-      padding: 20px 0;
+      min-height: 66px;
       border-bottom: 1px solid var(--line);
     }
     .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; }
@@ -97,45 +146,113 @@ function renderShell(content, options = {}) {
       color: #fff;
       font-size: 13px;
     }
-    .nav { display: flex; flex-wrap: wrap; gap: 16px; color: var(--muted); font-size: 14px; }
-    .nav a { text-decoration: none; }
-    .layout {
-      display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
-      gap: 34px;
-      padding: 34px 0 52px;
-    }
-    .sidebar {
-      position: sticky;
-      top: 20px;
-      align-self: start;
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .search-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 230px;
+      min-height: 38px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--surface);
-      padding: 14px;
+      color: var(--muted);
+      padding: 0 10px;
+      font: inherit;
+      cursor: pointer;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
     }
-    .sidebar h2 { margin: 0 0 10px; font-size: 13px; color: var(--muted); text-transform: uppercase; }
+    .kbd {
+      margin-left: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface-2);
+      color: #475569;
+      padding: 2px 6px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .external-nav { display: flex; gap: 14px; color: var(--muted); font-size: 14px; }
+    .external-nav a { text-decoration: none; }
+    .product-nav {
+      display: flex;
+      gap: 2px;
+      overflow-x: auto;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .product-nav a {
+      flex: 0 0 auto;
+      border-radius: 8px;
+      color: #475569;
+      padding: 8px 11px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 750;
+    }
+    .product-nav a:hover,
+    .product-nav a.active {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr) 230px;
+      gap: 28px;
+      padding: 28px 0 52px;
+    }
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      align-self: start;
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      padding-right: 6px;
+    }
+    .sidebar-group { margin-bottom: 22px; }
+    .sidebar h2 { margin: 0 0 8px; font-size: 12px; color: #64748b; text-transform: uppercase; }
     .sidebar a {
       display: block;
-      padding: 8px 10px;
+      padding: 7px 10px;
       border-radius: 7px;
       color: #334155;
       text-decoration: none;
       font-size: 14px;
     }
-    .sidebar a:hover { background: var(--surface-2); color: var(--text); }
+    .sidebar a:hover,
+    .sidebar a.active { background: var(--surface-2); color: var(--text); }
+    .toc {
+      position: sticky;
+      top: 18px;
+      align-self: start;
+      max-height: calc(100vh - 36px);
+      overflow: auto;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .toc h2 { margin: 0 0 10px; color: #64748b; font-size: 12px; text-transform: uppercase; }
+    .toc a {
+      display: block;
+      padding: 6px 0;
+      color: #475569;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      padding-left: 10px;
+    }
+    .toc a:hover { border-left-color: var(--accent); color: var(--text); }
     .content {
       min-width: 0;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--surface);
       padding: clamp(22px, 4vw, 42px);
-      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.06);
+      box-shadow: var(--shadow);
     }
-    .hero { padding: 48px 0 18px; }
+    .hero { padding: 52px 0 20px; }
     .eyebrow { margin: 0 0 14px; color: var(--accent); font-size: 13px; font-weight: 800; text-transform: uppercase; }
     h1 { margin: 0 0 18px; font-size: clamp(38px, 6vw, 68px); line-height: 0.98; letter-spacing: 0; }
     .lead { max-width: 760px; margin: 0; color: var(--muted); font-size: 18px; line-height: 1.65; }
+    .quick-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
     .search {
       display: flex;
       gap: 10px;
@@ -164,6 +281,7 @@ function renderShell(content, options = {}) {
       font-weight: 800;
       text-decoration: none;
     }
+    .button.secondary { border-color: var(--line); background: var(--surface); color: var(--text); }
     .cards {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -176,6 +294,12 @@ function renderShell(content, options = {}) {
       background: var(--surface);
       padding: 18px;
       text-decoration: none;
+      transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+    }
+    .card:hover {
+      border-color: #b8c4d4;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+      transform: translateY(-1px);
     }
     .card h3 { margin: 0 0 8px; font-size: 17px; }
     .card p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 14px; }
@@ -210,13 +334,61 @@ function renderShell(content, options = {}) {
       padding: 4px 0 4px 16px;
       color: var(--muted);
     }
+    .command-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      background: rgba(15, 23, 42, 0.42);
+      padding: 64px 20px;
+    }
+    .command-modal.open { display: block; }
+    .command-panel {
+      width: min(720px, 100%);
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 24px 80px rgba(15, 23, 42, 0.26);
+      overflow: hidden;
+    }
+    .command-panel input {
+      width: 100%;
+      min-height: 54px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      padding: 0 16px;
+      font: inherit;
+      font-size: 16px;
+      outline: none;
+    }
+    .command-results {
+      max-height: 430px;
+      overflow: auto;
+      padding: 8px;
+    }
+    .command-result {
+      display: block;
+      border-radius: 8px;
+      padding: 11px 12px;
+      text-decoration: none;
+    }
+    .command-result:hover { background: var(--surface-2); }
+    .command-result strong { display: block; font-size: 14px; }
+    .command-result span { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; }
     .footer { border-top: 1px solid var(--line); padding: 24px 0 34px; color: var(--muted); font-size: 13px; }
-    @media (max-width: 900px) {
+    @media (max-width: 1120px) {
+      .layout { grid-template-columns: 240px minmax(0, 1fr); }
+      .toc { display: none; }
+    }
+    @media (max-width: 820px) {
       .layout { grid-template-columns: 1fr; }
       .sidebar { position: static; }
       .cards { grid-template-columns: 1fr; }
       .search { flex-direction: column; }
       .topbar { align-items: flex-start; flex-direction: column; }
+      .top-actions { width: 100%; align-items: stretch; flex-direction: column; }
+      .search-trigger { width: 100%; }
     }
   </style>
 </head>
@@ -227,44 +399,115 @@ function renderShell(content, options = {}) {
         <span class="mark">CB</span>
         <span>CoreBlow Docs</span>
       </a>
-      <nav class="nav" aria-label="Docs navigation">
+      <div class="top-actions">
+        <button class="search-trigger" type="button" data-open-search>
+          <span>Search documentation</span>
+          <span class="kbd">⌘K</span>
+        </button>
+        <nav class="external-nav" aria-label="External navigation">
         <a href="https://coreblow.com">Website</a>
         <a href="https://coreblow.com/corehub">CoreHub</a>
         <a href="https://github.com/coreblow/docs">GitHub</a>
       </nav>
+      </div>
     </header>
+    <nav class="product-nav" aria-label="Documentation navigation">
+      ${topLinks}
+    </nav>
     <main class="layout">
-      <aside class="sidebar">
-        <h2>Sections</h2>
-        ${nav}
-      </aside>
+      ${sidebar}
       <section>
         ${content}
       </section>
+      ${toc}
     </main>
     <footer class="footer">CoreBlow documentation is maintained in github.com/coreblow/docs.</footer>
   </div>
+  <div class="command-modal" data-search-modal aria-hidden="true">
+    <div class="command-panel" role="dialog" aria-label="Search documentation">
+      <input data-search-input type="search" placeholder="Search CoreBlow docs" autocomplete="off" />
+      <div class="command-results" data-search-results></div>
+    </div>
+  </div>
+  <script type="application/json" id="docs-search-index">${escapeHtml(JSON.stringify(searchIndex))}</script>
+  <script>
+    const modal = document.querySelector("[data-search-modal]");
+    const input = document.querySelector("[data-search-input]");
+    const results = document.querySelector("[data-search-results]");
+    const index = JSON.parse(document.querySelector("#docs-search-index").textContent);
+    const openSearch = () => {
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+      input.value = "";
+      renderResults(index.slice(0, 8));
+      input.focus();
+    };
+    const closeSearch = () => {
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    };
+    document.querySelectorAll("[data-open-search]").forEach((button) => button.addEventListener("click", openSearch));
+    document.addEventListener("keydown", (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        openSearch();
+      }
+      if (event.key === "Escape") closeSearch();
+    });
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) closeSearch();
+    });
+    input.addEventListener("input", () => {
+      const terms = input.value.toLowerCase().split(/[^a-z0-9-]+/).filter(Boolean);
+      if (!terms.length) {
+        renderResults(index.slice(0, 8));
+        return;
+      }
+      const matches = index
+        .map((doc) => ({ doc, score: scoreDocClient(doc, terms) }))
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score || a.doc.route.localeCompare(b.doc.route))
+        .slice(0, 12)
+        .map((item) => item.doc);
+      renderResults(matches);
+    });
+    function scoreDocClient(doc, terms) {
+      const title = doc.title.toLowerCase();
+      const haystack = [doc.title, doc.route, doc.path, doc.summary].join(" ").toLowerCase();
+      return terms.reduce((score, term) => score + (title.includes(term) ? 10 : 0) + (doc.route.includes(term) ? 5 : 0) + (haystack.includes(term) ? 1 : 0), 0);
+    }
+    function renderResults(items) {
+      results.innerHTML = items.length
+        ? items.map((doc) => '<a class="command-result" href="' + doc.route + '"><strong>' + escapeHtmlClient(doc.title) + '</strong><span>' + escapeHtmlClient(doc.path) + '</span></a>').join("")
+        : '<div class="command-result"><strong>No results</strong><span>Try a different query.</span></div>';
+    }
+    function escapeHtmlClient(value) {
+      return String(value).replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[char]);
+    }
+  </script>
 </body>
 </html>`;
 }
 
 function renderHome() {
   const featured = [
+    findDoc("/start/quickstart"),
     findDoc("/install"),
     findDoc("/cli"),
-    findDoc("/configuration"),
     findDoc("/channels"),
     findDoc("/plugins"),
     findDoc("/gateway"),
+    findDoc("/reference/cli-reference"),
   ].filter(Boolean);
   return `<div class="hero">
     <p class="eyebrow">Documentation</p>
-    <h1>CoreBlow operator docs.</h1>
-    <p class="lead">Install, configure, operate, extend, and troubleshoot CoreBlow across CLI, channels, plugins, providers, gateway, security, and platform deployments.</p>
-    <form class="search" action="/search" method="get">
-      <input name="q" type="search" placeholder="Search documentation" aria-label="Search documentation" />
-      <button class="button" type="submit">Search</button>
-    </form>
+    <h1>CoreBlow</h1>
+    <p class="lead">Enterprise-grade documentation for installing, operating, extending, and securing CoreBlow across CLI, gateway, channels, plugins, providers, and platform deployments.</p>
+    <div class="quick-actions">
+      <a class="button" href="/start/quickstart">Get Started</a>
+      <a class="button secondary" href="/install">Install</a>
+      <a class="button secondary" href="/cli">CLI Reference</a>
+    </div>
   </div>
   <div class="cards">
     ${featured.map(renderCard).join("")}
@@ -277,6 +520,30 @@ function renderHome() {
       </ul>
     </div>
   </div>`;
+}
+
+function renderSidebar(activeRoute) {
+  const groups = navGroups
+    .map((group) => {
+      const links = group.routes
+        .map((route) => findDoc(route))
+        .filter(Boolean)
+        .map((doc) => `<a class="${isActiveRoute(activeRoute, doc.route) ? "active" : ""}" href="${escapeAttr(doc.route)}">${escapeHtml(doc.title)}</a>`)
+        .join("");
+      if (!links) return "";
+      return `<div class="sidebar-group"><h2>${escapeHtml(group.title)}</h2>${links}</div>`;
+    })
+    .join("");
+  return `<aside class="sidebar">${groups}</aside>`;
+}
+
+function renderToc(items) {
+  if (!items.length) {
+    return `<aside class="toc"><h2>On this page</h2><a href="#top">Overview</a></aside>`;
+  }
+  return `<aside class="toc"><h2>On this page</h2>${items
+    .map((item) => `<a href="#${escapeAttr(item.id)}">${escapeHtml(item.title)}</a>`)
+    .join("")}</aside>`;
 }
 
 function renderSearch(query) {
@@ -297,7 +564,7 @@ function renderSearch(query) {
 function renderDocument(doc) {
   return `<article class="content">
     <p class="doc-path">${escapeHtml(doc.path)}</p>
-    <div class="doc-body">${markdownToHtml(doc.content)}</div>
+    <div class="doc-body" id="top">${markdownToHtml(doc.content, { anchors: true })}</div>
   </article>`;
 }
 
@@ -351,7 +618,7 @@ function scoreDoc(doc, terms) {
   return score;
 }
 
-function markdownToHtml(markdown) {
+function markdownToHtml(markdown, options = {}) {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
   const html = [];
   let inCode = false;
@@ -399,7 +666,8 @@ function markdownToHtml(markdown) {
       flushParagraph();
       closeList();
       const level = heading[1].length;
-      html.push(`<h${level}>${renderInline(heading[2])}</h${level}>`);
+      const id = options.anchors ? ` id="${escapeAttr(slugify(heading[2]))}"` : "";
+      html.push(`<h${level}${id}>${renderInline(heading[2])}</h${level}>`);
       continue;
     }
 
@@ -443,6 +711,32 @@ function markdownToHtml(markdown) {
   closeList();
   if (inCode) html.push("</code></pre>");
   return html.join("\n");
+}
+
+function extractHeadings(markdown) {
+  return markdown
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .map((line) => line.match(/^(#{2,3})\s+(.+)$/))
+    .filter(Boolean)
+    .map((match) => ({
+      id: slugify(match[2]),
+      title: match[2].replace(/[#`*_]/g, "").trim(),
+    }));
+}
+
+function slugify(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "section";
+}
+
+function isActiveRoute(activeRoute, candidate) {
+  if (!activeRoute) return false;
+  if (activeRoute === candidate) return true;
+  return candidate !== "/" && activeRoute.startsWith(`${candidate}/`);
 }
 
 function renderInline(value) {
