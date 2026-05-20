@@ -211,6 +211,10 @@
                     "page": "corehub/trust-model"
                   },
                   {
+                    "label": "Publishing Roadmap",
+                    "page": "corehub/publishing-roadmap"
+                  },
+                  {
                     "label": "Registry API",
                     "page": "corehub/api"
                   }
@@ -375,6 +379,7 @@
     "docs/corehub/versions-and-artifacts.md",
     "docs/corehub/downloads.md",
     "docs/corehub/trust-model.md",
+    "docs/corehub/publishing-roadmap.md",
     "docs/corehub/api.md",
     "docs/gateway/index.md",
     "docs/gateway/api.md",

@@ -116,3 +116,5 @@ Recommended client behavior:
 ## Security Boundary
 
 CoreHub does not ask clients to trust storage alone. The registry provides the signed contract, artifact metadata, publisher ownership, and moderation state. Storage only provides bytes; the client still verifies those bytes against CoreHub metadata before install.
+
+For the planned write-side registry flow, see the [Publishing Roadmap](/corehub/publishing-roadmap).

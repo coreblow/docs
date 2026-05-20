@@ -36,6 +36,7 @@ The current CoreHub release is the registry foundation:
 - Publisher-owned version and artifact manifest metadata.
 - Storage-backed signed download redirects.
 - Trust model documentation for verification and moderation behavior.
+- Publishing roadmap documentation for future write-side registry flows.
 
 Write-side publishing, moderation workflows, and install analytics are planned follow-up surfaces.
 
@@ -47,4 +48,5 @@ Write-side publishing, moderation workflows, and install analytics are planned f
 - [Versions and Artifacts](/corehub/versions-and-artifacts)
 - [Downloads](/corehub/downloads)
 - [Trust Model](/corehub/trust-model)
+- [Publishing Roadmap](/corehub/publishing-roadmap)
 - [Registry API](/corehub/api)
