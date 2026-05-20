@@ -62,8 +62,11 @@ The JSON response includes:
 ```sh
 npm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
 ```
 
 Without `--output`, the CLI requests `redirect=false` and prints the signed download metadata. With `--output`, it fetches the signed storage URL, verifies `artifact.size` and `artifact.sha256`, then writes the artifact to disk.
+
+`package install` uses the same verified download path when `--output` is present, but the command still returns a dry-run install plan instead of modifying CoreBlow plugin state.
 
 For the security model behind this flow, see the [Trust Model](/corehub/trust-model). For endpoint details and status codes, see the [Registry API](/corehub/api).

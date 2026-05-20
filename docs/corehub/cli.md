@@ -58,6 +58,15 @@ npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manif
 
 Without `--output`, the CLI requests `redirect=false` from the Registry API and prints the package, publisher, artifact checksum, storage URL, and signature metadata. With `--output`, it fetches the signed storage URL, verifies the downloaded byte count and SHA-256 checksum, and writes the artifact only after verification passes.
 
+6. Produce a dry-run installer plan:
+
+```sh
+npm run corehub -- package install plugin-lab --registry https://coreblow.com/corehub
+npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+```
+
+`package install` does not modify CoreBlow plugin state yet. It resolves the package, checks publisher and artifact metadata, and reports the install steps that would run. With `--output`, it also performs the verified artifact download and includes the verification result in the plan.
+
 ## Package-Compatible Commands
 
 CoreHub keeps ClawHub-style package commands so clients can grow around stable registry habits:
@@ -71,6 +80,8 @@ npm run corehub -- package files plugin-lab
 npm run corehub -- package artifact plugin-lab
 npm run corehub -- package download plugin-lab
 npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json
+npm run corehub -- package install plugin-lab
+npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json
 ```
 
 ## Hosted Registry Reads
@@ -88,6 +99,8 @@ npm run corehub -- package files plugin-lab --registry https://coreblow.com/core
 npm run corehub -- package artifact plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package download plugin-lab --registry https://coreblow.com/corehub
 npm run corehub -- package download plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+npm run corehub -- package install plugin-lab --registry https://coreblow.com/corehub
+npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
 npm run corehub -- registry info --registry https://coreblow.com/corehub
 ```
 
@@ -118,6 +131,25 @@ If the byte count or SHA-256 checksum does not match the artifact manifest, the 
 
 For the signed redirect behavior behind this command, see [Downloads](/corehub/downloads). For the full trust chain, see [Trust Model](/corehub/trust-model).
 
+## Install Planning
+
+`corehub package install <id>` is currently an install planner. It returns JSON with:
+
+| Field | Purpose |
+| --- | --- |
+| `dryRun` | Always `true` until CoreBlow plugin install wiring lands. |
+| `install.status` | Planned install action and whether CoreBlow state would be modified. |
+| `download.verified` | Whether the artifact was fetched and checksum verified. |
+| `plan` | Ordered install steps for package resolution, publisher verification, artifact fetch, and plugin install. |
+
+Use `--output <path>` when you want the planner to prove the artifact bytes:
+
+```sh
+npm run corehub -- package install plugin-lab --output plugin-lab.corehub-manifest.json --registry https://coreblow.com/corehub
+```
+
+The command remains dry-run after writing the verified artifact; it does not install the plugin into CoreBlow yet.
+
 ## Command Map
 
 | Command | Status | Purpose |
@@ -136,5 +168,6 @@ For the signed redirect behavior behind this command, see [Downloads](/corehub/d
 | `corehub package files <id>` | Available | Show file metadata from the artifact manifest. |
 | `corehub package artifact <id>` | Available | Show artifact manifest metadata, checksum, provenance, and download policy. |
 | `corehub package download <id>` | Available | Print signed download metadata or write a verified artifact with `--output`. |
+| `corehub package install <id>` | Available | Produce a dry-run install plan, optionally with a verified artifact download. |
 | `corehub package publish <source>` | Planned | Publish package artifacts after registry writes land. |
 | `corehub registry info` | Available | Read the API discovery document. |
