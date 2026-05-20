@@ -63,11 +63,11 @@ Without `--output`, the CLI requests `redirect=false` from the Registry API and 
 6. Use the OpenClaw-style install command:
 
 ```sh
-npm run corehub -- install plugin-lab --registry https://coreblow.com/corehub
-npm run corehub -- install plugin-lab --dry-run --registry https://coreblow.com/corehub
+coreblow plugins install corehub:plugin-lab
+coreblow plugins install corehub:plugin-lab --dry-run
 ```
 
-`corehub install <id>` is the user-facing install entrypoint, matching OpenClaw's simple install shape. It resolves the package and publisher, fetches and verifies the installable CoreBlow plugin archive, then stops at the CoreBlow installer boundary until that handoff is wired. Use `--dry-run` to preview the install plan without fetching bytes.
+`coreblow plugins install corehub:<id>` is the CoreBlow install entrypoint, matching OpenClaw's simple install shape: the default command installs, and `--dry-run` previews without writing config. The installer resolves CoreHub metadata, follows signed download metadata, verifies artifact size and SHA-256, extracts the CoreBlow plugin archive, and records the install only after verification succeeds.
 
 ## Package-Compatible Commands
 
@@ -155,13 +155,13 @@ npm run corehub -- package install plugin-lab --output plugin-lab.coreblow-plugi
 
 The technical command remains a planner after writing the verified artifact; it does not install the plugin into CoreBlow yet.
 
-The user-facing command is shorter:
+The CoreBlow user-facing command is shorter:
 
 ```sh
-npm run corehub -- install plugin-lab --registry https://coreblow.com/corehub
+coreblow plugins install corehub:plugin-lab
 ```
 
-That command follows the OpenClaw UX direction. It attempts the install flow by default, verifies the plugin archive, and reports a blocked apply step until the CoreBlow plugin installer boundary is connected.
+That command follows the OpenClaw UX direction. It installs by default, while `--dry-run` verifies and previews the same CoreHub package without persisting plugin config.
 
 ## Command Map
 
