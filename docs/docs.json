@@ -211,6 +211,10 @@
                     "page": "corehub/trust-model"
                   },
                   {
+                    "label": "Admin Runbook",
+                    "page": "corehub/admin-runbook"
+                  },
+                  {
                     "label": "Publishing",
                     "page": "corehub/publishing-roadmap"
                   },
