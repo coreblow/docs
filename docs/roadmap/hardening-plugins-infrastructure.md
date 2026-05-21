@@ -13,7 +13,7 @@
 | TSC Errors | 0 | **0** | 0 | ✅ Maintained |
 | `@vitest/spy` versions | 4 | **1** (4.1.4) | 1 | ✅ Done |
 | `@ts-nocheck` (our additions) | 118 | **93** (−25) | 0 | 🟡 79% remaining |
-| Source `any` (3 core modules) | 60 | **20** (−40) | <10 | ✅ 67% reduced |
+| Source `any` (3 core modules) | 60 | **20** (−40) | &lt;10 | ✅ 67% reduced |
 | `channels/` `any` | 36 | **0** | 0 | ✅ OC parity |
 | `gateway/` `any` | 9 | **5** | 5 | ✅ OC parity |
 | `plugins/` `any` | 15 | **0** | 0 | ✅ DONE (Sprint 7) |
@@ -148,10 +148,10 @@ Track 3 was completed in **3 phases** across **3 branches**:
 
 ## Track 4: 🔄 Circular Dependency Cleanup — ✅ DONE (Revised)
 
-> **Goal:** ~~Break circular dep pairs to <80~~ → Establish baseline, extract shared utilities
+> **Goal:** ~~Break circular dep pairs to &lt;80~~ → Establish baseline, extract shared utilities
 
 > [!NOTE]
-> Target <80 direvisi ke 115 (maintained). 115 module-level pairs 100% disebabkan
+> Target &lt;80 direvisi ke 115 (maintained). 115 module-level pairs 100% disebabkan
 > runtime function calls (bukan type imports) yang tidak bisa dipisahkan tanpa event bus.
 > Phase 4c dijadwalkan setelah Track 5 selesai dengan prerequisite: integration tests
 > untuk `agents ↔ auto-reply` boundary harus ada lebih dulu.
@@ -174,7 +174,7 @@ Track 3 was completed in **3 phases** across **3 branches**:
 | `src/types/provider-id.ts` | `normalizeProviderId`, `parseModelRef`, `buildModelRef` |
 | `src/types/index.ts` | Barrel re-exporting all shared types |
 
-### Root Cause (why <80 is not achievable without Phase 4c)
+### Root Cause (why &lt;80 is not achievable without Phase 4c)
 
 All 115 module-level circular pairs are caused by **runtime function calls**:
 - `config/defaults.ts` → `agents/model-selection.ts` (9 deps)
@@ -455,7 +455,7 @@ graph TD
 | `@ts-nocheck` (source files) | 179 | **52** | 0 | 🟡 −114 (Sprint 8) |
 | `@ts-nocheck` (test files) | 162 | **162** | TBD | ⬜ Upstream debt, separate workstream |
 | `@ts-nocheck` (plugins/ source) | 11 | **0** | 0 | ✅ DONE (Sprint 6) |
-| Source `any` (3 modules) | 60 | **20** | <10 | ✅ −40 |
+| Source `any` (3 modules) | 60 | **20** | &lt;10 | ✅ −40 |
 | Source `as any` casts | 24 | **0** | 0 | ✅ DONE (Sprint 14) |
 | `channels/` `any` | 36 | **0** | 0 | ✅ OC parity |
 | `gateway/` `any` | 9 | **5** | 5 | ✅ OC parity |

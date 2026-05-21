@@ -111,7 +111,7 @@ CoreBlow auth test files:
 |:---:|:---|:---:|:---|
 | 1 | `subagent-registry.ts` | 730 | Main registry, lifecycle listener, sweeper, init, restore |
 | 2 | `subagent-registry-types.ts` | 65 | SubagentRunRecord type |
-| 3 | `subagent-registry-memory.ts` | 5 | Singleton Map<string, SubagentRunRecord> |
+| 3 | `subagent-registry-memory.ts` | 5 | Singleton Map&lt;string, SubagentRunRecord&gt; |
 | 4 | `subagent-registry-state.ts` | 60 | Persist/restore to/from disk |
 | 5 | `subagent-registry-store.ts` | 130 | Store path resolution, atomic writes |
 | 6 | `subagent-registry-helpers.ts` | 355 | Orphan detection, reconciliation, session status |

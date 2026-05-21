@@ -6,22 +6,22 @@
 
 ## Table of Contents
 
-1. [Tool Registry & Executor](#1-tool-registry--executor)
+1. [Tool Registry and Executor](#1-tool-registry-and-executor)
 2. [Builtin Tools](#2-builtin-tools)
 3. [Workflow Engine](#3-workflow-engine)
 4. [Security Scanning](#4-security-scanning)
-   - [Skill Scanner](#41-skill-scanner)
-   - [PII Scanner](#42-pii-scanner)
-   - [Toxicity Detector](#43-toxicity-detector)
-   - [Bias Detector](#44-bias-detector)
-   - [Content Filter](#45-content-filter)
+   - [Skill Scanner](#4-1-skill-scanner)
+   - [PII Scanner](#4-2-pii-scanner)
+   - [Toxicity Detector](#4-3-toxicity-detector)
+   - [Bias Detector](#4-4-bias-detector)
+   - [Content Filter](#4-5-content-filter)
 5. [Guardrails Engine](#5-guardrails-engine-unified-pipeline)
 6. [Model Scanning](#6-model-scanning)
 7. [Status Scanning](#7-status-scanning)
 
 ---
 
-## 1. Tool Registry & Executor
+## 1. Tool Registry and Executor
 
 The `ToolRegistry` manages agent tools, and `ToolExecutor` handles execution with timeout, retry, and concurrency.
 
