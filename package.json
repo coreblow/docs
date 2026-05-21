@@ -5,11 +5,12 @@
   "packageManager": "pnpm@10.23.0",
   "scripts": {
     "build": "node scripts/build-docs-list.mjs",
-    "check": "pnpm build && node --input-type=module --check < src/index.js && node scripts/check-readme.mjs && node scripts/docs-link-audit.mjs",
+    "check": "pnpm build && node --input-type=module --check < src/index.js && node scripts/check-readme.mjs && node scripts/docs-link-audit.mjs && pnpm docs:anchors",
     "deploy": "pnpm check && npx wrangler deploy",
     "dev": "pnpm build && npx wrangler dev",
     "docs:check": "pnpm check",
     "docs:links": "node scripts/docs-link-audit.mjs",
+    "docs:anchors": "node scripts/docs-link-audit.mjs --anchors",
     "docs:glossary": "node scripts/check-docs-i18n-glossary.mjs"
   },
   "devDependencies": {}

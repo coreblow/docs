@@ -50,6 +50,8 @@ This repository follows the same ecosystem split that CoreBlow uses to keep rele
 pnpm check
 ```
 
+This also runs Mintlify anchor validation through `pnpm docs:anchors`.
+
 ### Develop
 
 ```sh

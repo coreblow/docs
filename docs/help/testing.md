@@ -561,8 +561,8 @@ Useful env vars:
 
 ## Docs sanity
 
-Run docs checks after doc edits: `pnpm lint:docs` and `node scripts/docs-link-audit.mjs`.
-Run full Mintlify anchor validation when you need in-page heading checks too: `node scripts/docs-link-audit.mjs --anchors`.
+Run docs checks after doc edits: `pnpm check`. The docs gate includes generated docs validation, internal link auditing, and Mintlify anchor validation.
+Run `pnpm docs:anchors` when you only need to recheck in-page heading links.
 
 ## Offline regression (CI-safe)
 
