@@ -1737,12 +1737,12 @@ export const DOCS = [
     "content": "# Mcp\n\nMcp is a core concept in CoreBlow.\n\n## Overview\n\n## How it works\n\n## Configuration\n\n## Examples"
   },
   {
-    "title": "Memory",
+    "title": "Cory 4-Layer Memory Engine",
     "route": "/concepts/memory",
     "path": "docs/concepts/memory.md",
     "section": "concepts",
-    "summary": "Memory allows agents to retain context across conversations.",
-    "content": "# Memory\n\nMemory allows agents to retain context across conversations."
+    "summary": "The Cory Memory Engine provides persistent, structured, and sub-millisecond contextual memory for autonomous CoreBlow agents. It implements an immutable Single Memory Authority invariant where the Gateway microkernel is ",
+    "content": "# Cory 4-Layer Memory Engine\n\nThe Cory Memory Engine provides persistent, structured, and sub-millisecond contextual memory for autonomous CoreBlow agents. It implements an immutable Single Memory Authority invariant where the Gateway microkernel is the exclusive single writer.\n\n## Architecture & Layers\n\nCory organizes memory into four distinct architectural layers:\n\n1. **Layer 1: Identity (`IDENTITY.md`)**\n   - Defines the immutable persona, communication tone, and fundamental identity directives of the agent.\n2. **Layer 2: Durable Knowledge (`MEMORY.md`)**\n   - High-confidence facts, user preferences, and project-specific knowledge.\n   - Indexed via native SQLite WAL with hybrid full-text (BM25) search for `< 2ms` sub-millisecond retrieval without vector database bloat.\n3. **Layer 3: System Constraints (`CONSTRAINTS.md`)**\n   - Active operational guardrails and non-negotiable repository policies pinned directly to every conversation turn.\n4. **Layer 4: Episodic Memory (Session WAL)**\n   - Chronological turn logs and tool execution trajectories recorded with SHA-256 integrity checksums.\n\n## Knowledge Scribe & Zero-Stall Compaction\n\nTo prevent token context overflow while avoiding hallucinatory summarization, Cory uses the **Knowledge Scribe**:\n- Trajectories are distilled into durable memory notes before token budgets are exhausted.\n- Zero-stall prepared compaction preserves critical constraints across long conversations without blocking agent turns.\n\n## Client Access\n\nAll external surfaces (Desktop Studio, Web Cockpit, CLI) query memory via the Gateway REST endpoint:\n```http\nGET /api/cory/layers\nGET /api/cory/search?q=<query>\n```"
   },
   {
     "title": "Middleware",
@@ -1825,12 +1825,12 @@ export const DOCS = [
     "content": "# Sessions\n\nSessions is a core concept in CoreBlow.\n\n## Overview\n\n## How it works\n\n## Configuration\n\n## Examples"
   },
   {
-    "title": "Skills",
+    "title": "Cory EvoLoop & Cognitive Skills",
     "route": "/concepts/skills",
     "path": "docs/concepts/skills.md",
     "section": "concepts",
-    "summary": "Skills is a core concept in CoreBlow.",
-    "content": "# Skills\n\nSkills is a core concept in CoreBlow.\n\n## Overview\n\n## How it works\n\n## Configuration\n\n## Examples"
+    "summary": "CoreBlow agents use **Cory EvoLoop**, a closed-loop skill synthesis and refinement engine that autonomously evolves cognitive capabilities from successful execution trajectories.",
+    "content": "# Cory EvoLoop & Cognitive Skills\n\nCoreBlow agents use **Cory EvoLoop**, a closed-loop skill synthesis and refinement engine that autonomously evolves cognitive capabilities from successful execution trajectories.\n\n## Overview\n\nUnlike fragile monolithic plugins that require external dependencies and complex compilation, Cognitive Skills in CoreBlow follow the `SKILL.md` V2 blueprint:\n- **Zero Runtime Dependencies:** Plain, human-readable structured Markdown.\n- **Fast Indexed Recall:** Stored in SQLite WAL and indexed for BM25 associative search.\n- **Role-Bounded Execution:** Applied selectively depending on agent specialization (Lead, Coder, Auditor, Researcher, Verifier).\n\n## How EvoLoop Works\n\n```\nTurn Execution (Trajectory)\n          │\n          ▼\n   Trajectory Distiller\n          │\n          ▼\n3-Gate Zero-Trust Security Scanner\n          │\n          ▼\n  Bayesian Wilson Scoring (z=1.28)\n          │\n          ▼\nSkill Promotion: Candidate -> Verified Active\n```\n\n1. **Trajectory Distillation:** Successful turn steps and validated tool outputs are analyzed by the distiller.\n2. **3-Gate Security Scanner:** Ensures candidate skills do not contain prompt injections, command escalation, or hardcoded secrets.\n3. **Bayesian Wilson Score:** Evaluates skill utility and stability across repeated turns before promotion.\n4. **Promotion & Immutability:** High-confidence skills graduate to `verified_active`. Critical organization skills can be locked with `locked: true` to prevent automated regression.\n\n## Configuration & Storage\n\nSkills are stored locally under `skills/<skill-name>/SKILL.md` and indexed by the microkernel on startup:\n\n```markdown\n---\nname: code-review\ndescription: Automated security and architectural code review.\nversion: 1.0.0\nlocked: true\ntags: [security, code-quality]\n---\n\n# Code Review Blueprint\n\n1. Verify static types with tsgo.\n2. Inspect changed diff lines for secrets.\n3. Assert test coverage before approval.\n```"
   },
   {
     "title": "Streaming",
@@ -4017,12 +4017,12 @@ export const DOCS = [
     "content": "# Channel Format\n\n## Schema\n```json\n{}\n```\n\n## Fields\n| Field | Type | Required |\n|-------|------|----------|"
   },
   {
-    "title": "Reference: Cli Reference",
+    "title": "CoreBlow CLI Reference (v2.1.2)",
     "route": "/reference/cli-reference",
     "path": "docs/reference/cli-reference.md",
     "section": "reference",
-    "summary": "Technical reference for cli reference.",
-    "content": "# Reference: Cli Reference\n\nTechnical reference for cli reference."
+    "summary": "Complete reference for the `coreblow` command-line interface.",
+    "content": "# CoreBlow CLI Reference (v2.1.2)\n\nComplete reference for the `coreblow` command-line interface.\n\n## Global Options\n\n- `-p, --print <prompt>`: Execute in headless mode, streaming or printing the response directly to stdout and exiting cleanly.\n- `-c, --continue`: Resume the latest active session for the current workspace.\n- `-r, --resume [id]`: Resume a conversation session by ID or open the interactive SQLite WAL+FTS5 session picker.\n- `--dev`: Run with the development profile (isolated state under `~/.coreblow-dev`, shifted ports).\n- `--profile <name>`: Isolate state and configuration under `~/.coreblow-<name>`.\n- `-V, --version`: Output the current CoreBlow version (`2.1.2`).\n- `-h, --help`: Display help and command usage.\n\n## Primary Commands\n\n### Headless & Interactive Execution\n```bash\n# Headless prompt execution with pipe support\ncat prompt.txt | coreblow -p \"Review this implementation\"\n\n# Continue the latest workspace session\ncoreblow -c\n\n# Interactive fuzzy search session picker\ncoreblow -r\n```\n\n### CoreBlow Studio Desktop\n```bash\n# Launch CoreBlow Studio Desktop\ncoreblow desktop\n\n# Handoff active session directly into the sandboxed Electron Studio\ncoreblow desktop --session <session-id>\n```\nCoreBlow Studio Desktop provides a high-performance Electron + Vite + React desktop environment with `webPreferences.sandbox: true`, secure IPC token handoff (`COREBLOW_SESSION_ID`), and screen capture consent guardrails.\n\n### 24/7 Cron Orchestration\n```bash\n# List all active and scheduled cron jobs\ncoreblow cron list\n\n# Add a recurring scheduled prompt\ncoreblow cron add --schedule \"0 * * * *\" --prompt \"Hourly health summary\"\n\n# Trigger a job run immediately\ncoreblow cron run <job-id>\n```\n\n### Unified Bot Channels\n```bash\n# Manage 24/7 bot messaging channels (Telegram, Discord, Slack, WhatsApp, Signal)\ncoreblow bots status\n\n# Monitor bot lifecycle and automated loop protection\ncoreblow bots monitor\n```\n\n### Sovereign MCP Bridge\n```bash\n# Serve Model Context Protocol (MCP) tools over JSON-RPC / stdio transport\ncoreblow mcp serve\n```\nExposes 75 native microkernel tools and dynamic plugin MCP tools with collision namespacing (`${pluginId}__${toolName}`) and `notifications/coreblow/*` protocol.\n\n### Gateway Control Plane\n```bash\n# Run the WebSocket Gateway locally (default port: 18789)\ncoreblow gateway run\n\n# Check gateway reachability and service status\ncoreblow gateway status\n```\n\n### Health & Security\n```bash\n# Run system diagnostics and repair recommendations\ncoreblow doctor\n\n# Run local security audits and credential scan\ncoreblow security audit\n```"
   },
   {
     "title": "Config Format",
