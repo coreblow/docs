@@ -1,6 +1,8 @@
 # CoreBlow Documentation
 
-Welcome to CoreBlow — the open-source AI gateway and agent platform.
+Welcome to CoreBlow — One sovereign brain. Every surface.
+
+The open-source AI gateway and sovereign agent platform.
 
 ## Quick Start
 ```bash

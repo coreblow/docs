@@ -2,11 +2,11 @@
 
 ## System Architecture
 
-CoreBlow v2.1.2 is an enterprise-grade sovereign AI orchestration platform built on an asynchronous 12-service microkernel in TypeScript. It provides a unified gateway interface for orchestrating autonomous agents, tool execution, persistent cognitive memory, self-evolving skills, multi-channel communication, and operating-system-level sandboxing.
+CoreBlow v2.1.3 is an enterprise-grade sovereign AI orchestration platform built on an asynchronous 12-service microkernel in TypeScript. It provides a unified gateway interface for orchestrating autonomous agents, tool execution, persistent cognitive memory, self-evolving skills, multi-channel communication, and operating-system-level sandboxing.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│                        CoreBlow Gateway v2.1.2                         │
+│                        CoreBlow Gateway v2.1.3                         │
 ├────────────────────────────────────────────────────────────────────────┤
 │                     12-Service Microkernel Plane                       │
 │ ┌─────────────────────────┬────────────────────────┬─────────────────┐ │
