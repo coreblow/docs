@@ -5,7 +5,8 @@
   "packageManager": "pnpm@10.23.0",
   "scripts": {
     "build": "node scripts/build-docs-list.mjs",
-    "check": "pnpm build && node --input-type=module --check < src/index.js && node scripts/check-readme.mjs && node scripts/docs-link-audit.mjs && pnpm docs:anchors",
+    "test": "node scripts/check-docs-hygiene.mjs && pnpm run check",
+    "check": "node scripts/check-docs-hygiene.mjs && pnpm build && node --input-type=module --check < src/index.js && node scripts/check-readme.mjs && node scripts/docs-link-audit.mjs && pnpm docs:anchors",
     "deploy": "pnpm check && npx wrangler deploy",
     "dev": "pnpm build && npx wrangler dev",
     "docs:check": "pnpm check",

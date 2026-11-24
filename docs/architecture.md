@@ -2,113 +2,89 @@
 
 ## System Architecture
 
-CoreBlow Gateway is a production-grade AI agent orchestration platform built in TypeScript. It provides a unified interface for managing AI conversations, tool execution, plugin systems, and multi-channel communication.
+CoreBlow v2.1.2 is an enterprise-grade sovereign AI orchestration platform built on an asynchronous 12-service microkernel in TypeScript. It provides a unified gateway interface for orchestrating autonomous agents, tool execution, persistent cognitive memory, self-evolving skills, multi-channel communication, and operating-system-level sandboxing.
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                   CoreBlow Gateway                   │
-├─────────────┬──────────────┬────────────────────────┤
-│  Channels   │   Agents     │   Infrastructure       │
-│  ─────────  │   ──────     │   ──────────────       │
-│  • Discord  │  • Turn Eng. │  • Config System       │
-│  • Telegram │  • AutoPilot │  • Plugin Registry     │
-│  • Slack    │  • SubAgents │  • Security Layer      │
-│  • IRC      │  • RAG Pipe  │  • Dashboard           │
-│  • WhatsApp │  • Cron Jobs │  • WebSocket Server    │
-│  • Webhooks │  • Hooks     │  • Rate Limiting       │
-├─────────────┴──────────────┴────────────────────────┤
-│              Runtime & Sandbox Layer                 │
-│  • Docker Sandbox  • Native Process Isolation       │
-│  • Token Bucket    • RBAC System                    │
-│  • Audit Logger    • PII Scanner                    │
-└─────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                        CoreBlow Gateway v2.1.2                         │
+├────────────────────────────────────────────────────────────────────────┤
+│                     12-Service Microkernel Plane                       │
+│ ┌─────────────────────────┬────────────────────────┬─────────────────┐ │
+│ │  Execution & Memory     │  Coordination & Tools  │ Infrastructure  │ │
+│ │  ──────────────────     │  ────────────────────  │ ──────────────  │ │
+│ │  • Cory 4-Layer Memory  │  • Tool Engine & MCP   │ • Config System │ │
+│ │  • Knowledge Scribe     │  • War Room Swarm      │ • Plugin Host   │ │
+│ │  • EvoLoop Synthesizer  │  • Channel Dispatcher  │ • Telemetry     │ │
+│ │  • Provider Runtime     │  • Agent Registry      │ • Cron Scheduler│ │
+│ └─────────────────────────┴────────────────────────┴─────────────────┘ │
+├────────────────────────────────────────────────────────────────────────┤
+│                  Runtime & Security Sandbox Layer                      │
+│  • macOS Seatbelt (sandbox-exec)  • Linux Bubblewrap (bwrap)           │
+│  • Container Isolation (Docker)   • Workspace-Only Path Enforcement    │
+│  • Token Bucket Rate Limiting     • OWASP Agentic AI Security Policies │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Directory Structure
+## The 12-Service Microkernel
 
-```
-gateway/
-├── src/
-│   ├── acp/                    # Agent Communication Protocol
-│   ├── agents/                 # Agent subsystems
-│   │   ├── turn-engine/        # Turn-based conversation engine
-│   │   │   ├── autopilot/      # AutoPilot (auto-reply, queue, heartbeat)
-│   │   │   └── config/         # Agent configuration & defaults
-│   │   └── mcp/                # Model Context Protocol
-│   ├── auto-reply/             # Auto-reply pipeline
-│   ├── channels/               # Channel adapters (Discord, Telegram, etc.)
-│   ├── config/                 # Configuration system & Zod schemas
-│   ├── dashboard/              # Web dashboard
-│   ├── gateway/                # Gateway server, RPC, API schemas
-│   ├── hooks/                  # Hook/flow engine
-│   ├── image-generation/       # Image generation provider registry
-│   ├── infra/                  # Infrastructure utilities
-│   ├── plugins/                # Plugin system (registry, lifecycle, SDK)
-│   ├── rag/                    # RAG pipeline (chunker, loader, embeddings)
-│   ├── security/               # Security layer (guardrails, RBAC, PII, etc.)
-│   └── utils/                  # Shared utilities
-├── tests/
-│   └── security/               # Security integration tests
-├── docs/                       # Documentation
-└── scripts/                    # Migration & utility scripts
-```
+CoreBlow's execution engine is decomposed into 12 decoupled microkernel services with explicit dependency graphs and independent health lifecycle checks:
 
-## Core Subsystems
+1. **Provider Runtime (`provider-runtime`)**
+   - Manages AI provider connections (OpenAI, Anthropic, Google, Ollama, local models) with streaming token normalization and automatic model failover.
+2. **Agent Registry (`agent-registry`)**
+   - Coordinates multi-agent topologies, subagents, and turn management.
+3. **Tool Engine & MCP Host (`tool-engine`)**
+   - Executes built-in tools and dynamic Model Context Protocol (MCP) servers with namespaced capability isolation.
+4. **Cory Memory Authority (`cory-memory`)**
+   - Immutable single-writer memory service managing Identity, Durable Knowledge, Constraints, and Session WALs.
+5. **EvoLoop Skill Synthesizer (`cory-skill-synthesizer`)**
+   - Self-evolving closed-loop engine that synthesizes cognitive skills from successful agent trajectories.
+6. **Knowledge Scribe (`cory-knowledge-scribe`)**
+   - Background trajectory distillation and zero-stall memory compaction preventing context overflow.
+7. **War Room Swarm Coordinator (`war-room`)**
+   - Multi-agent collaboration matrix with shared message boards and role-specialized consensus.
+8. **Plugin Host & Loader (`plugin-host`)**
+   - Dynamic plugin lifecycle, permission grants, and CoreHub package verification.
+9. **Channel Dispatcher (`channel-dispatcher`)**
+   - Routes inbound and outbound messages across Telegram, Discord, Slack, WhatsApp, Signal, iMessage, and Web.
+10. **OS Sandbox Manager (`os-sandbox-manager`)**
+    - Enforces OS-level filesystem and network confinement using macOS Seatbelt (`sandbox-exec`) and Linux Bubblewrap (`bwrap`).
+11. **Cron Scheduler (`cron-scheduler`)**
+    - High-precision scheduled tasks and autonomous background recurring workflows.
+12. **Telemetry & Cockpit Bridge (`telemetry-bridge`)**
+    - Live health telemetry, RTT latency monitoring, and Web Cockpit real-time event streaming.
 
-### 1. Agent Communication Protocol (ACP)
-The ACP subsystem manages session state, message routing, and agent lifecycle. Sessions are tracked via `AcpSession` with full metadata (model, workspace, tools, history).
+## Flagship Capabilities
 
-### 2. Turn Engine & AutoPilot
-The turn engine manages conversation turns with configurable models, temperature, and token limits. AutoPilot handles automated responses with priority queuing, heartbeat monitoring, and abort control.
+### 1. Cory 4-Layer Memory Engine
+Persistent, structured, sub-millisecond contextual memory:
+- **Layer 1: Identity (`IDENTITY.md`)** — Permanent agent persona and directives.
+- **Layer 2: Durable Knowledge (`MEMORY.md`)** — Hybrid SQLite BM25 full-text search (< 2ms).
+- **Layer 3: System Constraints (`CONSTRAINTS.md`)** — Non-negotiable repository policies pinned to every turn.
+- **Layer 4: Episodic Memory (Session WAL)** — Chronological turn trajectories with SHA-256 integrity checksums.
 
-### 3. Security Layer
-Production-grade security with:
-- **GuardrailsEngine**: Unified pipeline orchestrating toxicity, bias, PII, and content checks
-- **RBAC**: Role-based access (owner > admin > user > guest) with inheritance
-- **PII Scanner**: Detects and masks emails, phones, SSNs, credit cards, IPs
-- **Input Sanitizer**: XSS, SQL injection, command injection protection
-- **Token Bucket**: Per-key rate limiting with configurable refill
-- **Sandbox**: Docker + native process isolation
+### 2. Cory EvoLoop & Cognitive Skills
+Autonomous skill synthesis from verified executions, eliminating prompt drift and enabling long-term agent self-improvement.
 
-### 4. Plugin System
-Enterprise plugin architecture with:
-- Manifest validation (Zod schemas with semver, permissions, hooks)
-- Lifecycle management (install, enable, disable, uninstall)
-- Security sandboxing with permission grants
-- Marketplace integration
+### 3. War Room Swarms
+Coordinate multi-agent swarms with dedicated roles (Coordinators, Authors, Researchers, Verifiers) communicating over an append-only blackboard.
 
-### 5. Configuration System
-Zod-validated configuration with full defaults:
-- Gateway (port, host, auth, CORS)
-- Agents (temperature, tokens, timeout, model)
-- Sandbox (mode, resources, timeouts)
-- Tools (profiles, exec policies)
-- Channels, Models, Features, Logging
+### 4. React + Ink Terminal CLI
+Rich interactive command-line interface featuring animated status widgets, real-time token streaming, session switching, and command palettes.
 
-### 6. RAG Pipeline
-Retrieval-Augmented Generation with:
-- Multi-format document loader (.md, .txt, .json, .csv, .ts, .py, .html)
-- Recursive text chunker with configurable overlap
-- Vector search with MMR re-ranking
-- Embedding provider abstraction
+### 5. CoreHub Plugin Registry
+Cryptographically verified plugin marketplace supporting signed tarball downloads, SHA-256 checksum validation, and permission-scoped capability declarations.
+
+### 6. OS-Level Sandboxing
+Every untrusted shell execution is strictly sandboxed. Writes outside the designated workspace directory are rejected at the operating-system kernel boundary.
 
 ## Technology Stack
 
 | Component | Technology |
-|-----------|-----------|
-| Language | TypeScript (strict mode) |
-| Runtime | Node.js 23+ |
-| Package Manager | pnpm |
-| Test Framework | Vitest 2.1 |
-| Validation | Zod 4 |
-| Build | tsc (ESM) |
-
-## Quality Metrics
-
-| Metric | Value |
-|--------|-------|
-| Test Files | 432 |
-| Total Tests | 7,284 |
-| Pass Rate | 100% |
-| TypeScript Errors | 0 |
-| Zod Schemas | 4 (config, plugin, API, webhook) |
+| :--- | :--- |
+| Language | TypeScript (strict mode ESM) |
+| Core Runtime | Node.js 22+ / Bun |
+| Client Interfaces | React + Ink CLI, Electron Studio Desktop, SwiftUI macOS MenuBar |
+| Gateway Protocol | WebSocket & HTTP JSON-RPC 2.0 (Port 18789) |
+| Sandboxing | macOS Seatbelt, Linux Bubblewrap, Docker |
+| Package Manager | pnpm (strict workspaces) |

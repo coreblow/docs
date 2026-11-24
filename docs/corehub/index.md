@@ -31,7 +31,7 @@ The current CoreHub release is the registry foundation:
 - Public web directory.
 - Read-only Registry API v1.
 - CLI reads through `--registry`.
-- Package-compatible aliases for ClawHub-style command habits.
+- Package-compatible aliases for legacy package command habits.
 - Publisher identity records for catalog ownership.
 - Publisher-owned version and artifact manifest metadata.
 - Storage-backed signed download redirects.

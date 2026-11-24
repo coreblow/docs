@@ -69,6 +69,6 @@ npm run corehub -- package install plugin-lab --output plugin-lab.coreblow-plugi
 
 Without `--output`, the CLI requests `redirect=false` and prints the signed download metadata. With `--output`, it fetches the signed storage URL, verifies `artifact.size` and `artifact.sha256`, then writes the artifact to disk.
 
-`coreblow plugins install corehub:<id>` is the OpenClaw-style user command. It installs by default; `--dry-run` previews the same verified CoreHub package without writing plugin config. `package install` remains the technical CoreHub command and uses the same verified download path when `--output` is present.
+`coreblow plugins install corehub:<id>` is the standard user command. It installs by default; `--dry-run` previews the same verified CoreHub package without writing plugin config. `package install` remains the technical CoreHub command and uses the same verified download path when `--output` is present.
 
 For the security model behind this flow, see the [Trust Model](/corehub/trust-model). For endpoint details and status codes, see the [Registry API](/corehub/api).

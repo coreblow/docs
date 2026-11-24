@@ -37,7 +37,7 @@ The API is backed by the static CoreHub catalog today. It is intentionally read-
 | `kind` | `/entries`, `/catalog`, `/packages`, `/search`, `/packages/search` | Filters to `skill`, `plugin`, `provider`, or `channel`. |
 | `q` | `/search`, `/packages/search` | Search text. Empty queries return an empty result list. |
 | `limit` | `/search`, `/packages/search` | Maximum result count from `1` to `100`. Defaults to `25`. |
-| `family` | `/packages` | `family=skill` maps to skill entries for ClawHub-style clients. |
+| `family` | `/packages` | `family=skill` maps to skill entries for package-oriented clients. |
 | `version` | `/packages/:id/files`, `/packages/:id/artifact`, `/packages/:id/download`, `/download` | Selects a package version. Defaults to the current static version. |
 | `tag` | `/packages/:id/files`, `/packages/:id/artifact`, `/packages/:id/download`, `/download` | `latest` resolves to the current static version. |
 | `id` | `/download` | Package id for the top-level download alias. |
@@ -347,7 +347,7 @@ COREHUB_REGISTRY=https://coreblow.com/corehub
 | --- | --- |
 | Read catalog | Available in v1. |
 | Search | Available in v1 with deterministic static-catalog scoring. |
-| Package aliases | Available in v1 for CLI and ClawHub-style command compatibility. |
+| Package aliases | Available in v1 for CLI and package command compatibility. |
 | Publisher identity | Available in v1 as catalog-backed publisher records. |
 | Version metadata | Available in v1 as publisher-owned version records. |
 | Artifact manifest | Available in v1 with checksum, provenance, files, and download policy. |

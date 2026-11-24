@@ -60,18 +60,18 @@ npm run corehub -- package download plugin-lab --output plugin-lab.coreblow-plug
 
 Without `--output`, the CLI requests `redirect=false` from the Registry API and prints the package, publisher, artifact checksum, storage URL, and signature metadata. With `--output`, it fetches the signed storage URL, verifies the downloaded byte count and SHA-256 checksum, and writes the artifact only after verification passes.
 
-6. Use the OpenClaw-style install command:
+6. Use the CoreBlow plugin install command:
 
 ```sh
 coreblow plugins install corehub:plugin-lab
 coreblow plugins install corehub:plugin-lab --dry-run
 ```
 
-`coreblow plugins install corehub:<id>` is the CoreBlow install entrypoint, matching OpenClaw's simple install shape: the default command installs, and `--dry-run` previews without writing config. The installer resolves CoreHub metadata, follows signed download metadata, verifies artifact size and SHA-256, extracts the CoreBlow plugin archive, and records the install only after verification succeeds.
+`coreblow plugins install corehub:<id>` is the CoreBlow install entrypoint: the default command installs, and `--dry-run` previews without writing config. The installer resolves CoreHub metadata, follows signed download metadata, verifies artifact size and SHA-256, extracts the CoreBlow plugin archive, and records the install only after verification succeeds.
 
 ## Package-Compatible Commands
 
-CoreHub keeps ClawHub-style package commands so clients can grow around stable registry habits:
+CoreHub provides standard package commands so clients can manage registry packages directly:
 
 ```sh
 npm run corehub -- package explore
@@ -161,7 +161,7 @@ The CoreBlow user-facing command is shorter:
 coreblow plugins install corehub:plugin-lab
 ```
 
-That command follows the OpenClaw UX direction. It installs by default, while `--dry-run` verifies and previews the same CoreHub package without persisting plugin config.
+That command provides a streamlined, secure plugin installation workflow. It installs by default, while `--dry-run` verifies and previews the same CoreHub package without persisting plugin config.
 
 ## Command Map
 

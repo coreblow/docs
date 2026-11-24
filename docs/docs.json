@@ -24,6 +24,14 @@
                     "page": "architecture"
                   },
                   {
+                    "label": "Cory 4-Layer Memory",
+                    "page": "concepts/memory"
+                  },
+                  {
+                    "label": "EvoLoop Skills",
+                    "page": "concepts/skills"
+                  },
+                  {
                     "label": "Configuration",
                     "page": "configuration"
                   },
