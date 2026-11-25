@@ -2,7 +2,7 @@
 title: CoreBlow CLI Reference
 ---
 
-# CoreBlow CLI Reference (v2.1.5)
+# CoreBlow CLI Reference (v2.2.0)
 
 Complete reference for the `coreblow` command-line interface.
 
@@ -13,7 +13,7 @@ Complete reference for the `coreblow` command-line interface.
 - `-r, --resume [id]`: Resume a conversation session by ID or open the interactive SQLite WAL+FTS5 session picker.
 - `--dev`: Run with the development profile (isolated state under `~/.coreblow-dev`, shifted ports).
 - `--profile <name>`: Isolate state and configuration under `~/.coreblow-<name>`.
-- `-V, --version`: Output the current CoreBlow version (`2.1.5`).
+- `-V, --version`: Output the current CoreBlow version (`2.2.0`).
 - `-h, --help`: Display help and command usage.
 
 ## Primary Commands
