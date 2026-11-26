@@ -1617,6 +1617,38 @@ export const DOCS = [
     "content": "# Code Of Conduct\n\n## Overview"
   },
   {
+    "title": "Incident Playbook",
+    "route": "/community/incident-playbook",
+    "path": "docs/community/incident-playbook.md",
+    "section": "community",
+    "summary": "1. Preserve evidence without exposing private data. 2. Move sensitive details to a private maintainer channel. 3. Assign one incident lead. 4. Publish a public summary only after impact and remediation are clear.",
+    "content": "# Incident Playbook\n\n## First Response\n\n1. Preserve evidence without exposing private data.\n2. Move sensitive details to a private maintainer channel.\n3. Assign one incident lead.\n4. Publish a public summary only after impact and remediation are clear."
+  },
+  {
+    "title": "CoreBlow Onboarding",
+    "route": "/community/onboarding",
+    "path": "docs/community/onboarding.md",
+    "section": "community",
+    "summary": "New contributors should start with:",
+    "content": "# CoreBlow Onboarding\n\nNew contributors should start with:\n\n1. Read the repository `README.md` and [Community Rules](/community/rules).\n2. Pick one focused issue or documentation gap.\n3. Keep patches small and easy to review.\n4. Avoid release, version, or publish changes unless a maintainer asks."
+  },
+  {
+    "title": "CoreBlow Community Roles",
+    "route": "/community/roles",
+    "path": "docs/community/roles.md",
+    "section": "community",
+    "summary": "Maintainers steward repository health, review boundaries, releases, and community safety decisions.",
+    "content": "# CoreBlow Community Roles\n\n## Maintainers\n\nMaintainers steward repository health, review boundaries, releases, and community safety decisions.\n\n## Contributors\n\nContributors propose patches, docs, examples, and issue reports.\n\n## Moderators\n\nModerators keep community spaces focused, safe, and useful."
+  },
+  {
+    "title": "Community Rules",
+    "route": "/community/rules",
+    "path": "docs/community/rules.md",
+    "section": "community",
+    "summary": "CoreBlow community spaces are for building reliable, self-hosted AI systems with professional respect.",
+    "content": "# Community Rules\n\nCoreBlow community spaces are for building reliable, self-hosted AI systems with professional respect.\n\n## Baseline\n\n- Be constructive and specific.\n- Do not post secrets, private keys, phone numbers, or live customer data.\n- Keep support requests reproducible where possible.\n- Use CoreBlow branding when discussing project-owned repositories."
+  },
+  {
     "title": "Agents",
     "route": "/concepts/agents",
     "path": "docs/concepts/agents.md",
@@ -1911,6 +1943,14 @@ export const DOCS = [
     "section": "overview",
     "summary": "",
     "content": "# Contribution Guide\n\n## Overview"
+  },
+  {
+    "title": "Hello Agent",
+    "route": "/cookbook/hello-agent",
+    "path": "docs/cookbook/hello-agent.md",
+    "section": "cookbook",
+    "summary": "This recipe models a minimal CoreBlow SDK integration that accepts an input message and returns a structured reply payload.",
+    "content": "# Hello Agent\n\nThis recipe models a minimal CoreBlow SDK integration that accepts an input message and returns a structured reply payload.\n\n## Example Module\n\nSave the following module as `hello-agent.mjs`:\n\n```js\nexport function createReply(input) {\n  const text = String(input ?? \"\").trim();\n  return {\n    product: \"CoreBlow\",\n    ok: text.length > 0,\n    reply: text.length > 0 ? `CoreBlow received: ${text}` : \"CoreBlow needs input.\",\n  };\n}\n\nif (import.meta.url === `file://${process.argv[1]}`) {\n  console.log(JSON.stringify(createReply(\"hello\"), null, 2));\n}\n```\n\n## Run\n\n```sh\nnode hello-agent.mjs\n```\n\nExpected output:\n\n```json\n{\n  \"product\": \"CoreBlow\",\n  \"ok\": true,\n  \"reply\": \"CoreBlow received: hello\"\n}\n```"
   },
   {
     "title": "CoreHub Admin Runbook",
@@ -4988,6 +5028,15 @@ export const DOCS_CONFIG = {
                     "page": "install/windows"
                   }
                 ]
+              },
+              {
+                "group": "Cookbook",
+                "pages": [
+                  {
+                    "label": "Hello Agent",
+                    "page": "cookbook/hello-agent"
+                  }
+                ]
               }
             ]
           },
@@ -5224,6 +5273,27 @@ export const DOCS_CONFIG = {
                     "page": "support-channels"
                   }
                 ]
+              },
+              {
+                "group": "Community",
+                "pages": [
+                  {
+                    "label": "Onboarding",
+                    "page": "community/onboarding"
+                  },
+                  {
+                    "label": "Rules",
+                    "page": "community/rules"
+                  },
+                  {
+                    "label": "Roles",
+                    "page": "community/roles"
+                  },
+                  {
+                    "label": "Incident Playbook",
+                    "page": "community/incident-playbook"
+                  }
+                ]
               }
             ]
           }
@@ -5314,6 +5384,11 @@ export const DOCS_CONFIG = {
     "docs/concepts/tools.md",
     "docs/concepts/memory.md",
     "docs/tools/index.md",
-    "docs/start/quickstart.md"
+    "docs/start/quickstart.md",
+    "docs/cookbook/hello-agent.md",
+    "docs/community/onboarding.md",
+    "docs/community/rules.md",
+    "docs/community/roles.md",
+    "docs/community/incident-playbook.md"
   ]
 };

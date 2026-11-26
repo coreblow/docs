@@ -73,6 +73,15 @@
                     "page": "install/windows"
                   }
                 ]
+              },
+              {
+                "group": "Cookbook",
+                "pages": [
+                  {
+                    "label": "Hello Agent",
+                    "page": "cookbook/hello-agent"
+                  }
+                ]
               }
             ]
           },
@@ -309,6 +318,27 @@
                     "page": "support-channels"
                   }
                 ]
+              },
+              {
+                "group": "Community",
+                "pages": [
+                  {
+                    "label": "Onboarding",
+                    "page": "community/onboarding"
+                  },
+                  {
+                    "label": "Rules",
+                    "page": "community/rules"
+                  },
+                  {
+                    "label": "Roles",
+                    "page": "community/roles"
+                  },
+                  {
+                    "label": "Incident Playbook",
+                    "page": "community/incident-playbook"
+                  }
+                ]
               }
             ]
           }
@@ -399,6 +429,11 @@
     "docs/concepts/tools.md",
     "docs/concepts/memory.md",
     "docs/tools/index.md",
-    "docs/start/quickstart.md"
+    "docs/start/quickstart.md",
+    "docs/cookbook/hello-agent.md",
+    "docs/community/onboarding.md",
+    "docs/community/rules.md",
+    "docs/community/roles.md",
+    "docs/community/incident-playbook.md"
   ]
 }
