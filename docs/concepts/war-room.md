@@ -4,11 +4,11 @@ title: War Room v2
 
 # War Room v2
 
-**War Room v2** is CoreBlow's multi-agent orchestration engine (`src/agents/`) built around a single-brain **Cognitive Coordinator** and a deterministic Kanban DAG.
+**War Room v2** is CoreBlow's in-memory multi-agent orchestration and preview engine (`src/agents/`) built around a single-brain **Cognitive Coordinator** and a deterministic Kanban DAG.
 
 ## Specialist Roles
 
-Complex tasks can be delegated across role-bounded specialist workers communicating over a shared append-only board:
+Complex tasks can be coordinated across role-bounded specialist workers communicating over an in-memory append-only board:
 
 - `@coder` — Scoped implementation and refactoring tasks.
 - `@researcher` — Codebase, documentation, and dependency investigation.
@@ -16,9 +16,9 @@ Complex tasks can be delegated across role-bounded specialist workers communicat
 - `@verifier` — Test execution and regression verification.
 - `@all` — Coordinated broadcast across active War Room participants.
 
-## 5-Gate PR Verification Engine
+## 5-Gate Verification Engine
 
-Before proposed changes are accepted by the War Room workflow, CoreBlow evaluates five verification gates:
+Before proposed changes are accepted by the War Room workflow preview, CoreBlow evaluates five verification gates locally (it does not perform live automated GitHub PR merging):
 
 1. `typecheck` — Strict TypeScript verification (`tsgo --noEmit`).
 2. `linter` — Repository lint and import-boundary checks.
