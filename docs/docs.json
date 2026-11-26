@@ -24,12 +24,32 @@
                     "page": "architecture"
                   },
                   {
+                    "label": "CoreBlow Desktop",
+                    "page": "platforms/desktop"
+                  },
+                  {
                     "label": "Cory 4-Layer Memory",
                     "page": "concepts/memory"
                   },
                   {
                     "label": "EvoLoop Skills",
                     "page": "concepts/skills"
+                  },
+                  {
+                    "label": "War Room v2",
+                    "page": "concepts/war-room"
+                  },
+                  {
+                    "label": "Adaptive Routing",
+                    "page": "concepts/routing"
+                  },
+                  {
+                    "label": "Native MCP Bridge",
+                    "page": "concepts/mcp"
+                  },
+                  {
+                    "label": "Ecosystem Fleet",
+                    "page": "ecosystem-fleet"
                   },
                   {
                     "label": "Configuration",
@@ -434,6 +454,11 @@
     "docs/community/onboarding.md",
     "docs/community/rules.md",
     "docs/community/roles.md",
-    "docs/community/incident-playbook.md"
+    "docs/community/incident-playbook.md",
+    "docs/platforms/desktop.md",
+    "docs/concepts/war-room.md",
+    "docs/concepts/routing.md",
+    "docs/concepts/mcp.md",
+    "docs/ecosystem-fleet.md"
   ]
 }

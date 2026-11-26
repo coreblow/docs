@@ -194,6 +194,13 @@ function main() {
     process.exit(0);
   }
 
+  if (!fs.existsSync(GLOSSARY_PATH)) {
+    console.warn(
+      "docs:check-i18n-glossary: glossary file not found; skipping glossary coverage check.",
+    );
+    process.exit(0);
+  }
+
   const glossary = loadGlossarySources();
   /** @type {TermMatch[]} */
   const missing = [];

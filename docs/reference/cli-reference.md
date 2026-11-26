@@ -2,26 +2,27 @@
 title: CoreBlow CLI Reference
 ---
 
-# CoreBlow CLI Reference (v2.2.0)
+# CoreBlow CLI Reference (v2.3.1)
 
-Complete reference for the `coreblow` command-line interface.
+Complete reference for the `coreblow` command-line interface (`dist/entry.js`, lazy-loaded subcommands for fast cold-start).
 
 ## Global Options
 
-- `-p, --print <prompt>`: Execute in headless mode, streaming or printing the response directly to stdout and exiting cleanly.
+- `-p, --print <prompt>`: Execute in headless mode (stdin piping up to 10 MB, `--output-format text|json|stream-json`), print response to stdout, and exit.
 - `-c, --continue`: Resume the latest active session for the current workspace.
-- `-r, --resume [id]`: Resume a conversation session by ID or open the interactive SQLite WAL+FTS5 session picker.
-- `--dev`: Run with the development profile (isolated state under `~/.coreblow-dev`, shifted ports).
+- `-r, --resume [id]`: Resume a session by ID or open the interactive SQLite WAL + FTS5 session picker.
+- `--backend <type>`: Select execution backend per session.
+- `--dev`: Isolate state under `~/.coreblow-dev` with shifted ports.
 - `--profile <name>`: Isolate state and configuration under `~/.coreblow-<name>`.
-- `-V, --version`: Output the current CoreBlow version (`2.2.0`).
-- `-h, --help`: Display help and command usage.
+- `-V, --version`: Output the installed CoreBlow version (`2.3.1`).
+- `-h, --help`: Display command help.
 
 ## Primary Commands
 
 ### Headless & Interactive Execution
 ```bash
-# Headless prompt execution with pipe support
-cat prompt.txt | coreblow -p "Review this implementation"
+# Headless diff review with JSON output
+git diff | coreblow -p "Review these changes for security and edge cases" --output-format json
 
 # Continue the latest workspace session
 coreblow -c
@@ -35,53 +36,46 @@ coreblow -r
 # Launch CoreBlow Studio Desktop
 coreblow desktop
 
-# Handoff active session directly into the sandboxed Electron Studio
-coreblow desktop --session <session-id>
+# Handoff an active session directly into Desktop
+coreblow desktop --session latest
 ```
-CoreBlow Studio Desktop provides a high-performance Electron + Vite + React desktop environment with `webPreferences.sandbox: true`, secure IPC token handoff (`COREBLOW_SESSION_ID`), and screen capture consent guardrails.
+CoreBlow Studio Desktop (`apps/desktop/`) is the sole cross-platform Electron + Vite + React desktop application for macOS, Windows, and Linux, featuring built-in Menu Bar / System Tray controls, `electron-updater`, `webPreferences.sandbox: true`, and `COREBLOW_SESSION_ID` handoff.
 
 ### 24/7 Cron Orchestration
 ```bash
-# List all active and scheduled cron jobs
 coreblow cron list
-
-# Add a recurring scheduled prompt
 coreblow cron add --schedule "0 * * * *" --prompt "Hourly health summary"
-
-# Trigger a job run immediately
 coreblow cron run <job-id>
 ```
 
 ### Unified Bot Channels
 ```bash
-# Manage 24/7 bot messaging channels (Telegram, Discord, Slack, WhatsApp, Signal)
 coreblow bots status
-
-# Monitor bot lifecycle and automated loop protection
 coreblow bots monitor
 ```
 
-### Sovereign MCP Bridge
+### Sovereign MCP Bridge (75 Native Tools)
 ```bash
-# Serve Model Context Protocol (MCP) tools over JSON-RPC / stdio transport
+# Serve all 75 native tools standalone over stdio
 coreblow mcp serve
-```
-Exposes 75 native microkernel tools and dynamic plugin MCP tools with collision namespacing (`${pluginId}__${toolName}`) and `notifications/coreblow/*` protocol.
 
-### Gateway Control Plane
+# Bridge an active Gateway URL or channel runtime
+coreblow mcp serve --url http://127.0.0.1:18789
+```
+Exposes 75 native microkernel tools and dynamic plugin MCP tools with collision namespacing (`${pluginId}__${toolName}`).
+
+### Gateway, Diagnostics & Companion Client
 ```bash
-# Run the WebSocket Gateway locally (default port: 18789)
+# Run the loopback WebSocket Gateway locally (default port: 18789)
 coreblow gateway run
-
-# Check gateway reachability and service status
 coreblow gateway status
-```
 
-### Health & Security
-```bash
-# Run system diagnostics and repair recommendations
-coreblow doctor
+# Measure real RTT latency percentiles (min/median/p95/max ms)
+coreblow doctor --net
 
-# Run local security audits and credential scan
+# Launch the lightweight Go terminal companion (corechat)
+coreblow chat --go
+
+# Audit config permissions, secrets, and sandbox posture
 coreblow security audit
 ```

@@ -4,22 +4,29 @@ title: coreblow mcp
 
 # coreblow mcp
 
-Manage CoreBlow MCP config and channel bridge.
+Manage and serve CoreBlow's Model Context Protocol (MCP) bridge exposing **75 built-in native tools** over stdio and JSON-RPC.
 
 ## Usage
 
 ```bash
-coreblow mcp [options]
+# Start the standalone MCP server over stdio
+coreblow mcp serve
+
+# Connect the MCP bridge to a running Gateway instance
+coreblow mcp serve --url http://127.0.0.1:18789 --channel-bridge
+
+# Inspect MCP options
 coreblow mcp --help
 ```
 
-## Source Checkout
+## Features
 
-```bash
-pnpm coreblow mcp --help
-```
+- **75 Native Tools:** Exposes file, workspace, memory, diagnostic, browser, and orchestration tools directly over standard MCP.
+- **Standalone Execution:** Runs cleanly from global npm installs without requiring an external Gateway daemon unless channel bridging is requested.
+- **Collision Guard:** Automatically namespaces plugin-contributed tools (`${pluginId}__${toolName}`) to prevent duplicate tool collisions.
 
 ## Related
 
-- [CLI guide](/cli)
-- [CLI commands reference](/cli/commands)
+- [Native MCP Bridge](/concepts/mcp)
+- [CLI Guide](/cli)
+- [CLI Reference](/reference/cli-reference)
