@@ -23,7 +23,7 @@ Every repository enforces 100% 40-character commit SHA-pinned GitHub Actions, au
 
 | Repository | Role | Target Surfaces |
 | :--- | :--- | :--- |
-| [`coreblow/coreblow.com`](https://github.com/coreblow/coreblow.com) | Public website and universal installers | `public/install.sh`, `public/install-cli.sh` |
+| [`coreblow/coreblow.com`](https://github.com/coreblow/coreblow.com) | Public website and universal installers | `public/install.sh`, `public/install.ps1`, `public/install-cli.sh` |
 | [`coreblow/homebrew-tap`](https://github.com/coreblow/homebrew-tap) | Official Homebrew formula (`brew install coreblow/tap/coreblow`) | `Formula/coreblow.rb` |
 | [`coreblow/nix-coreblow`](https://github.com/coreblow/nix-coreblow) | Official Nix flake (`coreblow`, `coreblow-studio`, `devShells`, `nixfmt-rfc-style` formatter) | `flake.nix` |
 
@@ -32,7 +32,7 @@ Every repository enforces 100% 40-character commit SHA-pinned GitHub Actions, au
 | Repository | Role | Stack |
 | :--- | :--- | :--- |
 | [`coreblow/corebox`](https://github.com/coreblow/corebox) | Clean-room OS process isolation runner with verified Linux Bubblewrap (`bwrap` `--ro-bind`, `--tmpfs /tmp`, env scrub), macOS Seatbelt, and Docker | Node.js ESM |
-| [`coreblow/corebench`](https://github.com/coreblow/corebench) | Unified Gateway throughput benchmark harness, streaming TTFT/RTT profiler (`corebench rtt`), and threshold regression comparator (`corebench compare`) | Node.js ESM |
+| [`coreblow/corebench`](https://github.com/coreblow/corebench) | Unified Gateway throughput benchmark harness, streaming TTFT/RTT profiler (`corebench rtt`), threshold regression comparator (`corebench compare`), and behavioral agent evaluation suite (`corebench eval` — 32 scenarios across `tool-calling`, `coding-verification`, `memory-recall`, `safety-resistance`) | Node.js ESM |
 | [`coreblow/corebar`](https://github.com/coreblow/corebar) | Native macOS SwiftUI Menu Bar Gateway monitor | Swift |
 
 ## Declarative Fleet Verification

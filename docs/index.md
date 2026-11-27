@@ -1,6 +1,6 @@
 # CoreBlow Documentation
 
-Welcome to **CoreBlow v2.3.1** — One sovereign brain. Every surface.
+Welcome to **CoreBlow v2.4.0 / v2.5.0** — One sovereign brain. Every surface.
 
 CoreBlow is the self-hosted AI Agent-OS and Enterprise Gateway for terminal, desktop, web, and 24/7 messaging channels — built with security by default.
 
@@ -24,7 +24,7 @@ coreblow gateway run
 - [Architecture Overview](/architecture)
 - [CoreBlow Studio Desktop](/platforms/desktop)
 - [Cory 4-Layer Memory](/concepts/memory)
-- [War Room v2](/concepts/war-room)
+- [CoreFlow (War Room)](/concepts/war-room)
 - [Adaptive Decision Router](/concepts/routing)
 - [EvoLoop Cognitive Skills](/concepts/skills)
 - [Native MCP Bridge](/concepts/mcp)

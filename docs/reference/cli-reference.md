@@ -2,7 +2,7 @@
 title: CoreBlow CLI Reference
 ---
 
-# CoreBlow CLI Reference (v2.3.1)
+# CoreBlow CLI Reference (v2.4.0 / v2.5.0)
 
 Complete reference for the `coreblow` command-line interface (`dist/entry.js`, lazy-loaded subcommands for fast cold-start).
 
@@ -14,7 +14,7 @@ Complete reference for the `coreblow` command-line interface (`dist/entry.js`, l
 - `--backend <type>`: Select execution backend per session.
 - `--dev`: Isolate state under `~/.coreblow-dev` with shifted ports.
 - `--profile <name>`: Isolate state and configuration under `~/.coreblow-<name>`.
-- `-V, --version`: Output the installed CoreBlow version (`2.3.1`).
+- `-V, --version`: Output the installed CoreBlow version.
 - `-h, --help`: Display command help.
 
 ## Primary Commands
@@ -79,3 +79,17 @@ coreblow chat --go
 # Audit config permissions, secrets, and sandbox posture
 coreblow security audit
 ```
+
+### Persistent Cloud MicroVM Sandboxes (`daytona` / `e2b`)
+```bash
+# List local sandbox runtimes and backend availability
+coreblow sandbox list --json
+
+# Create, execute, pause, resume, and destroy persistent Cloud MicroVM sessions
+coreblow sandbox create --backend daytona --json
+coreblow sandbox exec --backend daytona --session <id> -- "node -v"
+coreblow sandbox pause --backend daytona --session <id>
+coreblow sandbox resume --backend daytona --session <id>
+coreblow sandbox destroy --backend daytona --session <id>
+```
+Requires `DAYTONA_API_KEY` for `daytona` or `E2B_API_KEY` for `e2b` (both fail closed when unconfigured). Planned cloud adapters (`modal`, `vercel`) remain fail-closed (`MODAL_NOT_IMPLEMENTED` / `VERCEL_NOT_IMPLEMENTED`, `available: false`).
