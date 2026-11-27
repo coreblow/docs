@@ -1261,8 +1261,8 @@ export const DOCS = [
     "route": "/cli/doctor",
     "path": "docs/cli/doctor.md",
     "section": "cli",
-    "summary": "Run health checks and guided repairs for gateway and channels.",
-    "content": "# coreblow doctor\n\nRun health checks and guided repairs for gateway and channels.\n\n## Usage\n\n```bash\ncoreblow doctor [options]\ncoreblow doctor --help\n```\n\n## Source Checkout\n\n```bash\npnpm coreblow doctor --help\n```\n\n## Related\n\n- [CLI guide](/cli)\n- [CLI commands reference](/cli/commands)"
+    "summary": "Run health checks and guided repairs for gateway, channels, pairing, and plugins.",
+    "content": "# coreblow doctor\n\nRun health checks and guided repairs for gateway, channels, pairing, and plugins.\n\n## Usage\n\n```bash\ncoreblow doctor [options]\ncoreblow doctor --help\n```\n\n## Options\n\n| Flag | Purpose |\n| --- | --- |\n| `--repair`, `--fix` | Apply recommended repairs when issues are detected. |\n| `--yes` | Accept default repair prompts. |\n| `--force` | Apply aggressive repairs (for example, overwriting custom service config). |\n| `--non-interactive` | Run without interactive prompts. |\n| `--deep` | Run extended system and service scans. |\n| `--net` | Run network latency and gateway health probes. |\n| `--net-url <url>` | Gateway URL to probe (default: `http://127.0.0.1:18789/health`). |\n| `--net-samples <n>` | Number of RTT samples to collect (default: `5`). |\n| `--generate-gateway-token` | Generate a gateway token if missing. |\n| `--no-workspace-suggestions` | Skip workspace memory system suggestions. |\n| `--json` | Output diagnostics in JSON format. |\n\n## Diagnostics in v2.6.0\n\n- **Codex route warnings and repair**: Scans config and agent session stores for legacy `openai-codex/*` model references, unsupported Codex compaction overrides, and disabled Codex plugin routes, offering canonical `openai/*` route repairs.\n- **Device pairing health**: Inspects pending and paired devices (via the running Gateway or local pairing state) for first-time approvals, public-key repairs, role or scope upgrade requests, and local device token mismatches.\n- **Plugin registry state**: Detects stale bundled packages in the managed npm plugin root, audits CoreBlow peer dependency links, and refreshes or migrates plugin registry records.\n\n## Source Checkout\n\n```bash\npnpm coreblow doctor --help\n```\n\n## Related\n\n- [CLI guide](/cli)\n- [CLI commands reference](/cli/commands)\n- [coreblow plugins](/cli/plugins)"
   },
   {
     "title": "coreblow env",
@@ -1438,7 +1438,7 @@ export const DOCS = [
     "path": "docs/cli/plugins.md",
     "section": "cli",
     "summary": "Manage CoreBlow plugin packages.",
-    "content": "# coreblow plugins\n\nManage CoreBlow plugin packages.\n\n## Usage\n\n```bash\ncoreblow plugins [options]\ncoreblow plugins --help\n```\n\n## Source Checkout\n\n```bash\npnpm coreblow plugins --help\n```\n\n## Related\n\n- [CLI guide](/cli)\n- [CLI commands reference](/cli/commands)"
+    "content": "# coreblow plugins\n\nManage CoreBlow plugin packages.\n\n## Usage\n\n```bash\ncoreblow plugins [options]\ncoreblow plugins --help\n```\n\n## Dependency Denylist Enforcement\n\nDuring plugin installation, CoreBlow validates both the plugin manifest (`package.json`) and extracted package contents against a built-in dependency denylist before enabling or linking the plugin:\n\n- Inspects `name`, `dependencies`, `optionalDependencies`, `peerDependencies`, and `overrides` (including `npm:` alias targets).\n- Scans nested `node_modules` directories and files inside the package archive for blocked package names (such as `plain-crypto-js`).\n- Rejects installation with a `blocked_dependency` error if any disallowed package is detected.\n\nUse [`coreblow doctor`](/cli/doctor) to audit existing managed plugin registries and peer dependency links.\n\n## Source Checkout\n\n```bash\npnpm coreblow plugins --help\n```\n\n## Related\n\n- [CLI guide](/cli)\n- [CLI commands reference](/cli/commands)\n- [Security](/security)"
   },
   {
     "title": "coreblow provider",
@@ -1590,7 +1590,7 @@ export const DOCS = [
     "path": "docs/cli/update.md",
     "section": "cli",
     "summary": "Update CoreBlow and inspect update channel status.",
-    "content": "# coreblow update\n\nUpdate CoreBlow and inspect update channel status.\n\n## Usage\n\n```bash\ncoreblow update [options]\ncoreblow update --help\n```\n\n## Source Checkout\n\n```bash\npnpm coreblow update --help\n```\n\n## Related\n\n- [CLI guide](/cli)\n- [CLI commands reference](/cli/commands)"
+    "content": "# coreblow update\n\nUpdate CoreBlow and inspect update channel status.\n\n## Usage\n\n```bash\ncoreblow update [options]\ncoreblow update status\ncoreblow update wizard\ncoreblow update --help\n```\n\n## Options\n\n| Flag | Purpose |\n| --- | --- |\n| `--channel <stable\\|beta\\|dev>` | Persist update channel (git and npm). |\n| `--tag <dist-tag\\|version\\|spec>` | Override the package target for a one-off update without persisting channel. |\n| `--dry-run` | Preview update actions without modifying config, installing, or restarting. |\n| `--no-restart` | Skip restarting the gateway service after a successful update. |\n| `--timeout <seconds>` | Timeout for each update step in seconds (default: `1200`). |\n| `--yes` | Skip confirmation prompts (non-interactive). |\n| `--json` | Output result as JSON. |\n\n## Staged Package Update and Rollback\n\nFor global npm-compatible installs, `coreblow update` performs a staged update to protect the live installation:\n\n1. **Stage**: Installs the target package into a temporary staging prefix (`.coreblow-update-stage-*`) inside the global `node_modules` root.\n2. **Verify**: Runs `global install verify` against the staged package root to confirm the expected version and package integrity before touching the live install.\n3. **Swap with backup**: Moves the existing live package to a temporary backup directory (`.coreblow-<pid>-<timestamp>`), moves the verified staged package into place, and updates npm binary shims with shim backup protection.\n4. **Automatic rollback**: If verification fails, the live install is left untouched and the staging directory is cleaned up. If the swap or shim replacement fails, `coreblow update` automatically restores the backed-up package and binary shims.\n\n## Source Checkout\n\n```bash\npnpm coreblow update --help\n```\n\n## Related\n\n- [CLI guide](/cli)\n- [CLI commands reference](/cli/commands)\n- [coreblow doctor](/cli/doctor)"
   },
   {
     "title": "coreblow version",
@@ -2510,7 +2510,7 @@ export const DOCS = [
     "path": "docs/gateway/deployment.md",
     "section": "gateway",
     "summary": "Gateway deployment.",
-    "content": "# Gateway: Deployment\n\nGateway deployment.\n\n## Configuration\n\n## Examples"
+    "content": "# Gateway: Deployment\n\nGateway deployment.\n\n## Configuration\n\nSet `gateway.mode` (`local` or `remote`) and configure `gateway.auth` (`token` or `password`) before starting the Gateway.\n\n## Examples\n\nReference platform manifests live under `deploy/examples/` in the CoreBlow repository:\n\n- `deploy/examples/fly.toml` — Public Fly.io deployment template\n- `deploy/examples/fly.private.toml` — Private Fly.io deployment template\n- `deploy/examples/render.yaml` — Render blueprint deployment template\n\nSee also [Fly.io](/platforms/fly-io) and [Render](/platforms/render)."
   },
   {
     "title": "Gateway",
@@ -3101,8 +3101,8 @@ export const DOCS = [
     "route": "/platforms/fly-io",
     "path": "docs/platforms/fly-io.md",
     "section": "platforms",
-    "summary": "Running CoreBlow on fly io.",
-    "content": "# Platform: Fly Io\n\nRunning CoreBlow on fly io.\n\n## Installation\n\n## Configuration\n\n## Troubleshooting"
+    "summary": "Running CoreBlow on Fly.io.",
+    "content": "# Platform: Fly Io\n\nRunning CoreBlow on Fly.io.\n\n## Installation\n\nUse the reference Fly.io manifests in the CoreBlow repository under `deploy/examples/`:\n\n- `deploy/examples/fly.toml` for standard deployments\n- `deploy/examples/fly.private.toml` for private-network deployments\n\n```bash\nfly deploy --config deploy/examples/fly.toml\n```\n\n## Configuration\n\nSet required runtime secrets (such as `COREBLOW_GATEWAY_TOKEN`) via `fly secrets set` before deploying.\n\n## Troubleshooting\n\nRun `coreblow doctor --net` against the deployed health endpoint to verify connectivity and gateway readiness."
   },
   {
     "title": "Platform: Gcp",
@@ -3157,8 +3157,8 @@ export const DOCS = [
     "route": "/platforms/render",
     "path": "docs/platforms/render.md",
     "section": "platforms",
-    "summary": "Running CoreBlow on render.",
-    "content": "# Platform: Render\n\nRunning CoreBlow on render.\n\n## Installation\n\n## Configuration\n\n## Troubleshooting"
+    "summary": "Running CoreBlow on Render.",
+    "content": "# Platform: Render\n\nRunning CoreBlow on Render.\n\n## Installation\n\nUse the Render blueprint manifest located at `deploy/examples/render.yaml` in the CoreBlow repository.\n\n## Configuration\n\nConfigure `COREBLOW_GATEWAY_TOKEN` and any provider API keys as Render environment variables.\n\n## Troubleshooting\n\nVerify `/health` on port `18789` (or your configured `PORT`) and run `coreblow doctor` if gateway startup fails."
   },
   {
     "title": "Platform: Termux",
@@ -4510,7 +4510,7 @@ export const DOCS = [
     "path": "docs/security/index.md",
     "section": "security",
     "summary": "",
-    "content": "# Security\n\n## Best Practices\n- Use environment variables for secrets\n- Enable rate limiting\n- Use HTTPS in production"
+    "content": "# Security\n\n## Best Practices\n- Use environment variables for secrets\n- Enable rate limiting\n- Use HTTPS in production\n- Keep plugin dependencies audited; CoreBlow enforces a built-in dependency denylist during [`coreblow plugins`](/cli/plugins) installation to block disallowed packages across manifests, `overrides`, and nested `node_modules`\n- Run [`coreblow doctor`](/cli/doctor) regularly to check device pairing health, Codex route safety, and plugin registry integrity"
   },
   {
     "title": "Ip Filtering",
